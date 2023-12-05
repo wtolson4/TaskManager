@@ -36,27 +36,6 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
             val completedTask = repository.getTaskById(taskId)
             completedTask?.let {
                 repository.markTaskAsCompleted(taskId, true)
-
-                if (it.recurrenceType.isNotEmpty()) {
-                    val completionCalendar = Calendar.getInstance()
-                    when (it.recurrenceType) {
-                        "DAILY" -> completionCalendar.add(Calendar.DAY_OF_YEAR, it.frequency)
-                        "WEEKLY" -> completionCalendar.add(Calendar.WEEK_OF_YEAR, it.frequency)
-                        "BIWEEKLY" -> completionCalendar.add(Calendar.WEEK_OF_YEAR, 2 * it.frequency)
-                        "MONTHLY" -> completionCalendar.add(Calendar.MONTH, it.frequency)
-                        "BIYEARLY" -> completionCalendar.add(Calendar.MONTH, 6 * it.frequency)
-                    }
-
-                    val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                    val newTask = Task(
-                        id = 0,
-                        taskName = completedTask.taskName,
-                        dueDate = sdf.format(completionCalendar.time),
-                        frequency = completedTask.frequency,
-                        recurrenceType = completedTask.recurrenceType
-                    )
-                    repository.insert(newTask)
-                }
             }
         }
     }

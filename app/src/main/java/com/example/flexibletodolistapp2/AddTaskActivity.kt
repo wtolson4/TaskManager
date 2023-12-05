@@ -2,10 +2,19 @@ package com.example.flexibletodolistapp2
 
 import android.app.DatePickerDialog
 import android.os.Bundle
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Spinner
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.Calendar
+import java.util.Locale
+
 
 class AddTaskActivity : AppCompatActivity() {
 
@@ -22,6 +31,7 @@ class AddTaskActivity : AppCompatActivity() {
 
         val taskNameEditText = findViewById<EditText>(R.id.taskNameEditText)
         val selectedDateTextView = findViewById<TextView>(R.id.selectedDateTextView)
+        var selectedDate: LocalDate? = null
         val pickDateButton = findViewById<Button>(R.id.pickDateButton)
         val addTaskButton = findViewById<Button>(R.id.addTaskButton)
         val cancelButton = findViewById<Button>(R.id.cancelButton)
@@ -35,8 +45,12 @@ class AddTaskActivity : AppCompatActivity() {
             val day = calendar[Calendar.DAY_OF_MONTH]
 
             val datePickerDialog = DatePickerDialog(this, { _, chosenYear, chosenMonth, chosenDay ->
-                val formattedDate = "${chosenMonth + 1}/$chosenDay/$chosenYear"
-                selectedDateTextView.text = formattedDate
+                val localDate = LocalDate.of(chosenYear, chosenMonth, chosenDay)
+                val DATE_FORMATTER = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(
+                    Locale.US
+                )
+                selectedDateTextView.text = localDate.format(DATE_FORMATTER)
+                selectedDate = localDate
             }, year, month, day)
 
             datePickerDialog.show()
@@ -44,7 +58,7 @@ class AddTaskActivity : AppCompatActivity() {
 
         addTaskButton.setOnClickListener {
             val taskName = taskNameEditText.text.toString().trim()
-            val dueDate = selectedDateTextView.text.toString().trim()
+            val dueDate = selectedDate
             val recurrenceType = if (frequencyEditText.text.toString().toIntOrNull() == 1) {
                 recurrenceTypeSpinner.selectedItem.toString()
             } else {
@@ -52,7 +66,7 @@ class AddTaskActivity : AppCompatActivity() {
             }
             val frequency = frequencyEditText.text.toString().toIntOrNull() ?: 0
 
-            if (taskName.isNotEmpty() && dueDate != "MM/DD/YYYY") {
+            if (taskName.isNotEmpty() && dueDate != null) {
                 val newTask = Task(
                     id = 0,
                     taskName = taskName,

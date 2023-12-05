@@ -51,15 +51,15 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Cancel"/>
+            android:text="Cancel" />
 
         <Button
             android:id="@+id/addTaskButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
             android:layout_weight="1"
-            android:text="@string/add_task"
-            android:layout_marginTop="8dp"/>
+            android:text="@string/add_task" />
     </LinearLayout>
 
 </LinearLayout>

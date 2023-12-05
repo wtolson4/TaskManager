@@ -7,6 +7,9 @@ import android.widget.CheckBox
 import android.widget.TextView
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.Locale
 
 class TaskAdapter(private val viewModel: TaskViewModel) : ListAdapter<Task, TaskAdapter.TaskViewHolder>(TaskDiffCallback()) {
 
@@ -18,7 +21,10 @@ class TaskAdapter(private val viewModel: TaskViewModel) : ListAdapter<Task, Task
 
         fun bind(currentTask: Task, viewModel: TaskViewModel) {
             taskNameTextView.text = currentTask.taskName
-            dueDateTextView.text = currentTask.dueDate
+            val DATE_FORMATTER = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(
+                Locale.US
+            )
+            dueDateTextView.text = currentTask.dueDate.format(DATE_FORMATTER)
             recurrenceTypeTextView.text = if (currentTask.frequency == 1) {
                 currentTask.recurrenceType
             } else {
