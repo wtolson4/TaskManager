@@ -20,20 +20,21 @@ class TaskAdapter(private val viewModel: TaskViewModel) : ListAdapter<Task, Task
         private val taskCompletionCheckBox: CheckBox = itemView.findViewById(R.id.taskCompletionCheckBox)
 
         fun bind(currentTask: Task, viewModel: TaskViewModel) {
-            taskNameTextView.text = currentTask.taskName
+            val taskDefinition = currentTask.definition
+            taskNameTextView.text = taskDefinition.taskName
             val DATE_FORMATTER = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(
                 Locale.US
             )
-            dueDateTextView.text = currentTask.dueDate.format(DATE_FORMATTER)
-            recurrenceTypeTextView.text = if (currentTask.frequency == 1) {
-                currentTask.recurrenceType
+            dueDateTextView.text = taskDefinition.dueDate.format(DATE_FORMATTER)
+            recurrenceTypeTextView.text = if (taskDefinition.frequency == 1) {
+                taskDefinition.recurrenceType
             } else {
-                "${currentTask.frequency} ${currentTask.recurrenceType}"
+                "${taskDefinition.frequency} ${taskDefinition.recurrenceType}"
             }
-            taskCompletionCheckBox.isChecked = currentTask.isCompleted
+            taskCompletionCheckBox.isChecked = taskDefinition.isCompleted
 
             taskCompletionCheckBox.setOnCheckedChangeListener { _, isChecked ->
-                val updatedTask = currentTask.copy(isCompleted = isChecked)
+                val updatedTask = taskDefinition.copy(isCompleted = isChecked)
                 viewModel.update(updatedTask)
             }
         }

@@ -9,7 +9,7 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [Task::class, CompletionDate::class], version = 2, exportSchema = false)
+@Database(entities = [TaskDefinition::class, CompletionDate::class], version = 2, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
@@ -22,8 +22,8 @@ abstract class AppDatabase : RoomDatabase() {
         // Migration strategy from version 1 to 2
         private val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE task_table ADD COLUMN completedDate TEXT DEFAULT NULL")
-                database.execSQL("ALTER TABLE task_table ADD COLUMN recurrenceType TEXT DEFAULT 'DAILY' NOT NULL")
+                // Leaving this here as a placeholder
+                database.execSQL("")
             }
         }
 

@@ -36,9 +36,9 @@ class MainActivity : AppCompatActivity() {
         taskRecyclerView.adapter = taskAdapter
 
         // Observe changes in the data and update the RecyclerView
-        viewModel.incompleteTasks.observe(this, { tasks ->
+        viewModel.allTasks.observe(this) { tasks ->
             taskAdapter.submitList(tasks)
-        })
+        }
 
         // Set click listener for the add task button
         addTaskButton.setOnClickListener {

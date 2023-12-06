@@ -1,11 +1,15 @@
 package com.example.flexibletodolistapp2
 
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.Relation
 import java.time.LocalDate
 
-@Entity(tableName = "task_table")
-data class Task(
+// https://developer.android.com/training/data-storage/room/relationships
+
+@Entity
+data class TaskDefinition(
     @PrimaryKey(autoGenerate = true) val id: Int,
     val taskName: String,
     val dueDate: LocalDate,
@@ -19,4 +23,13 @@ data class CompletionDate(
     @PrimaryKey(autoGenerate = true) val id: Int,
     val taskId: Int,
     val date: LocalDate,
+)
+
+data class Task(
+    @Embedded val definition: TaskDefinition,
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "taskId"
+    )
+    val completions: List<CompletionDate>
 )

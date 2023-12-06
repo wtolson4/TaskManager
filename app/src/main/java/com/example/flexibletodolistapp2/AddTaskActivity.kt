@@ -67,7 +67,7 @@ class AddTaskActivity : AppCompatActivity() {
             val frequency = frequencyEditText.text.toString().toIntOrNull() ?: 0
 
             if (taskName.isNotEmpty() && dueDate != null) {
-                val newTask = Task(
+                val newTask = TaskDefinition(
                     id = 0,
                     taskName = taskName,
                     dueDate = dueDate,

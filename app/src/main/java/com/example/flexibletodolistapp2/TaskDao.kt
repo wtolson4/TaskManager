@@ -12,28 +12,29 @@ import java.util.Locale
 
 @Dao
 interface TaskDao {
-    @Query(
-        "SELECT * FROM task_table JOIN completion_date_table ON task_table.id = completion_date_table.taskId"
-    )
-    fun loadTaskAndCompletionDates(): Map<Task, List<CompletionDate>>
+    // This method requires Room to run two queries, so add the @Transaction annotation to this
+    // method so that the whole operation is performed atomically.
+    // https://developer.android.com/training/data-storage/room/relationships#one-to-many
+    @Transaction
+    @Query("SELECT * FROM TaskDefinition")
+    fun getTasks(): LiveData<List<Task>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insert(task: Task): Long
+    fun insert(task: TaskDefinition): Long
 
     @Update
-    fun update(task: Task): Int
+    fun update(task: TaskDefinition)
 
-    @Delete
-    fun delete(task: Task): Int
-
-    @Query("SELECT * FROM task_table WHERE isCompleted = 0 ORDER BY dueDate ASC")
+    @Transaction
+    @Query("SELECT * FROM TaskDefinition WHERE isCompleted = 0 ORDER BY dueDate ASC")
     fun getIncompleteTasks(): LiveData<List<Task>>
 
-    @Query("UPDATE task_table SET isCompleted = :isCompleted WHERE id = :taskId")
+    @Transaction
+    @Query("UPDATE TaskDefinition SET isCompleted = :isCompleted WHERE id = :taskId")
     fun markTaskAsCompleted(taskId: Int, isCompleted: Boolean = true): Int
 
     // New method to get a Task by its ID
-    @Query("SELECT * FROM task_table WHERE id = :taskId")
+    @Query("SELECT * FROM TaskDefinition WHERE id = :taskId")
     fun getTaskById(taskId: Int): Task?
 }
 

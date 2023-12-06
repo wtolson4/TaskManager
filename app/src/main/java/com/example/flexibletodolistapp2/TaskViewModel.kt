@@ -13,23 +13,25 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
 
     val incompleteTasks: LiveData<List<Task>> = repository.incompleteTasks
 
-    fun insert(task: Task) = viewModelScope.launch {
+    val allTasks: LiveData<List<Task>> = repository.allTasks
+
+    fun insert(task: TaskDefinition) = viewModelScope.launch {
         withContext(Dispatchers.IO) {
             repository.insert(task)
         }
     }
 
-    fun update(task: Task) = viewModelScope.launch {
+    fun update(task: TaskDefinition) = viewModelScope.launch {
         withContext(Dispatchers.IO) {
             repository.update(task)
         }
     }
 
-    fun delete(task: Task) = viewModelScope.launch {
-        withContext(Dispatchers.IO) {
-            repository.delete(task)
-        }
-    }
+//    fun delete(task: Task) = viewModelScope.launch {
+//        withContext(Dispatchers.IO) {
+//            repository.delete(task)
+//        }
+//    }
 
     fun markAsCompleted(taskId: Int) = viewModelScope.launch {
         withContext(Dispatchers.IO) {
