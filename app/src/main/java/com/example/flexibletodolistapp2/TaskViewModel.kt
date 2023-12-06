@@ -10,9 +10,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
-
-    val incompleteTasks: LiveData<List<Task>> = repository.incompleteTasks
-
     val allTasks: LiveData<List<Task>> = repository.allTasks
 
     fun insert(task: TaskDefinition) = viewModelScope.launch {

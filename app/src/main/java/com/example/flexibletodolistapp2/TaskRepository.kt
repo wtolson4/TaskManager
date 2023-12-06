@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 
 class TaskRepository(private val taskDao: TaskDao) {
 
-    val incompleteTasks: LiveData<List<Task>> = taskDao.getIncompleteTasks()
     val allTasks: LiveData<List<Task>> = taskDao.getTasks()
 
     fun insert(task: TaskDefinition) {

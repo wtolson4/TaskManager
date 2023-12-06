@@ -12,7 +12,7 @@ import java.time.LocalDate
 data class TaskDefinition(
     @PrimaryKey(autoGenerate = true) val id: Int,
     val taskName: String,
-    val dueDate: LocalDate,
+    val initialDueDate: LocalDate,
     val frequency: Int,   // e.g., 2 for every two weeks when combined with recurrenceType
     val recurrenceType: String,  // DAILY, WEEKLY, BIWEEKLY, MONTHLY, BIYEARLY
     val isCompleted: Boolean = false,

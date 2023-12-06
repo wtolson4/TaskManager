@@ -25,7 +25,7 @@ class TaskAdapter(private val viewModel: TaskViewModel) : ListAdapter<Task, Task
             val DATE_FORMATTER = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(
                 Locale.US
             )
-            dueDateTextView.text = taskDefinition.dueDate.format(DATE_FORMATTER)
+            dueDateTextView.text = taskDefinition.initialDueDate.format(DATE_FORMATTER)
             recurrenceTypeTextView.text = if (taskDefinition.frequency == 1) {
                 taskDefinition.recurrenceType
             } else {

@@ -25,11 +25,6 @@ interface TaskDao {
     @Update
     fun update(task: TaskDefinition)
 
-    @Transaction
-    @Query("SELECT * FROM TaskDefinition WHERE isCompleted = 0 ORDER BY dueDate ASC")
-    fun getIncompleteTasks(): LiveData<List<Task>>
-
-    @Transaction
     @Query("UPDATE TaskDefinition SET isCompleted = :isCompleted WHERE id = :taskId")
     fun markTaskAsCompleted(taskId: Int, isCompleted: Boolean = true): Int
 

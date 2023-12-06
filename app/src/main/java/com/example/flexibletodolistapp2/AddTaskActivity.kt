@@ -70,7 +70,7 @@ class AddTaskActivity : AppCompatActivity() {
                 val newTask = TaskDefinition(
                     id = 0,
                     taskName = taskName,
-                    dueDate = dueDate,
+                    initialDueDate = dueDate,
                     frequency = frequency,
                     recurrenceType = recurrenceType,
                     isCompleted = false
