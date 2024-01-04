@@ -3,7 +3,7 @@
     <string name="add_task">Add Task</string>
     <string name="task_name_placeholder">Task Name</string>
     <string name="task_date_placeholder">MM/DD/YYYY</string>
-    <string name="pick_due_date">Pick Due Date</string>
+    <string name="pick_due_date">Select Initial Due Date</string>
 
     <string-array name="recurrence_types">
         <item>NONE</item>

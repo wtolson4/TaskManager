@@ -1,32 +1,39 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("kotlin-kapt")
+    id("com.google.devtools.ksp")
     kotlin("plugin.serialization") version "1.9.21"
 }
 
 android {
     namespace = "com.example.flexibletodolistapp2"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.flexibletodolistapp2"
         minSdk = 26
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+        getByName("release") {
+            isMinifyEnabled = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
+
+        getByName("debug") {
+            applicationIdSuffix = ".debug"
+            isDebuggable = true
+        }
+
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -39,19 +46,20 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.9.0")
+    implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.8.0")
+    implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1") // Updated to latest version
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.1") // Updated to latest version
-    implementation("androidx.room:room-runtime:2.4.2") // Updated to latest version
-    implementation("androidx.room:room-ktx:2.4.2") // Updated to latest version
-    kapt("androidx.room:room-compiler:2.4.2") // Updated to latest version
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2") // Updated to latest version
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2") // Updated to latest version
+    implementation("androidx.room:room-runtime:2.6.1") // Updated to latest version
+    implementation("androidx.room:room-ktx:2.6.1") // Updated to latest version
+    ksp("androidx.room:room-compiler:2.6.1") // Updated to latest version
     testImplementation("junit:junit:4.13.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.3.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.5.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    implementation("androidx.recyclerview:recyclerview:1.3.0")
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
+    implementation("com.jakewharton.timber:timber:5.0.1")
 }

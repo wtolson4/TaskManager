@@ -27,7 +27,7 @@ class AddTaskActivity : AppCompatActivity() {
         val dao = AppDatabase.getDatabase(this).taskDao()
         val repository = TaskRepository(dao)
         val factory = TaskViewModelFactory(repository)
-        viewModel = ViewModelProvider(this, factory).get(TaskViewModel::class.java)
+        viewModel = ViewModelProvider(this, factory)[TaskViewModel::class.java]
 
         val taskNameEditText = findViewById<EditText>(R.id.taskNameEditText)
         val selectedDateTextView = findViewById<TextView>(R.id.selectedDateTextView)
@@ -40,18 +40,19 @@ class AddTaskActivity : AppCompatActivity() {
 
         pickDateButton.setOnClickListener {
             val calendar = Calendar.getInstance()
-            val year = calendar[Calendar.YEAR]
-            val month = calendar[Calendar.MONTH]
-            val day = calendar[Calendar.DAY_OF_MONTH]
+            val todayYear = calendar[Calendar.YEAR]
+            val todayMonth = calendar[Calendar.MONTH]
+            val todayDay = calendar[Calendar.DAY_OF_MONTH]
 
             val datePickerDialog = DatePickerDialog(this, { _, chosenYear, chosenMonth, chosenDay ->
-                val localDate = LocalDate.of(chosenYear, chosenMonth, chosenDay)
-                val DATE_FORMATTER = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(
-                    Locale.US
+                val month1Index = chosenMonth + 1 // chosenMonth is 0-indexed
+                val localDate = LocalDate.of(chosenYear, month1Index, chosenDay)
+                val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(
+                    Locale.US // TODO: use device locale
                 )
-                selectedDateTextView.text = localDate.format(DATE_FORMATTER)
+                selectedDateTextView.text = localDate.format(dateFormatter)
                 selectedDate = localDate
-            }, year, month, day)
+            }, todayYear, todayMonth, todayDay)
 
             datePickerDialog.show()
         }
@@ -68,7 +69,7 @@ class AddTaskActivity : AppCompatActivity() {
 
             if (taskName.isNotEmpty() && dueDate != null) {
                 val newTask = TaskDefinition(
-                    id = 0,
+                    id = 0, // Insert methods treat 0 as not-set while inserting the item. (i.e. use
                     taskName = taskName,
                     initialDueDate = dueDate,
                     frequency = frequency,
@@ -78,7 +79,7 @@ class AddTaskActivity : AppCompatActivity() {
                 viewModel.insert(newTask)
                 finish()
             } else {
-                Toast.makeText(this, "Please enter all details correctly", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Please enter all details", Toast.LENGTH_SHORT).show()
             }
         }
 

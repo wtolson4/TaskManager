@@ -1,6 +1,7 @@
 package com.example.flexibletodolistapp2
 
 import androidx.lifecycle.LiveData
+import timber.log.Timber
 
 class TaskRepository(private val taskDao: TaskDao) {
 
@@ -11,6 +12,7 @@ class TaskRepository(private val taskDao: TaskDao) {
     }
 
     fun update(task: TaskDefinition) {
+        Timber.d("Updated task ID %s", task.id);
         taskDao.update(task)
     }
 
@@ -19,7 +21,13 @@ class TaskRepository(private val taskDao: TaskDao) {
 //    }
 
     fun markTaskAsCompleted(taskId: Int, isCompleted: Boolean) {
-        taskDao.markTaskAsCompleted(taskId, isCompleted)
+        val taskDefinition = taskDao.getTaskById(taskId)?.definition
+        val updatedDefinition = taskDefinition?.copy(isCompleted = isCompleted)
+        if (updatedDefinition != null) {
+            taskDao.update(updatedDefinition)
+        } else {
+            Timber.e("Failed to mark completed taskID %s", taskId);
+        }
     }
 
     fun getTaskById(taskId: Int): Task? {

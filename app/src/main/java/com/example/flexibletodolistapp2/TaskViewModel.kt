@@ -32,10 +32,7 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
 
     fun markAsCompleted(taskId: Int) = viewModelScope.launch {
         withContext(Dispatchers.IO) {
-            val completedTask = repository.getTaskById(taskId)
-            completedTask?.let {
-                repository.markTaskAsCompleted(taskId, true)
-            }
+            repository.markTaskAsCompleted(taskId, true)
         }
     }
 }

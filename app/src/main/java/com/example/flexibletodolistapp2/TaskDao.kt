@@ -25,10 +25,7 @@ interface TaskDao {
     @Update
     fun update(task: TaskDefinition)
 
-    @Query("UPDATE TaskDefinition SET isCompleted = :isCompleted WHERE id = :taskId")
-    fun markTaskAsCompleted(taskId: Int, isCompleted: Boolean = true): Int
-
-    // New method to get a Task by its ID
+    @Transaction
     @Query("SELECT * FROM TaskDefinition WHERE id = :taskId")
     fun getTaskById(taskId: Int): Task?
 }

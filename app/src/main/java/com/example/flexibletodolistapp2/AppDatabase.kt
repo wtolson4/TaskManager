@@ -21,9 +21,9 @@ abstract class AppDatabase : RoomDatabase() {
 
         // Migration strategy from version 1 to 2
         private val MIGRATION_1_2 = object : Migration(1, 2) {
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
                 // Leaving this here as a placeholder
-                database.execSQL("")
+                db.execSQL("")
             }
         }
 
