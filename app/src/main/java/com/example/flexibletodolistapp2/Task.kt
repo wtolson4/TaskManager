@@ -21,11 +21,11 @@ import java.time.temporal.ChronoUnit
 @Entity
 data class TaskDefinition(
     @PrimaryKey(autoGenerate = true) val id: Int,
-    val taskName: String,
+    val name: String,
+    val description: String,
+    val creationDate: LocalDate,
     val initialDueDate: LocalDate,
     val frequency: Int,
-    val recurrenceType: String,  // DAILY, WEEKLY, BIWEEKLY, MONTHLY, BIYEARLY
-    val isCompleted: Boolean = false,
 )
 
 @Entity(tableName = "completion_date_table")

@@ -1,62 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp">
 
-    <EditText
-        android:id="@+id/taskNameEditText"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/task_name_placeholder"
-        android:inputType="text"/>
+        android:layout_height="60dp"
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/selectedDateTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/task_date_placeholder"
-        android:paddingTop="8dp"/>
+        <EditText
+            android:id="@+id/taskNameEditText"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:hint="@string/task_name_placeholder"
+            android:inputType="text" />
 
-    <Button
-        android:id="@+id/pickDateButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/pick_due_date"/>
+        <EditText
+            android:id="@+id/frequencyEditText"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="0dp"
+            android:layout_weight="1"
+            android:hint="Period (days)"
+            android:inputType="number" />
 
-    <Spinner
-        android:id="@+id/recurrenceTypeSpinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:entries="@array/recurrence_types"
-        android:layout_marginTop="8dp" />
+    </LinearLayout>
 
     <EditText
-        android:id="@+id/frequencyEditText"
+        android:id="@+id/nextDueEditText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Frequency (days)"
-        android:layout_marginTop="8dp"
-        android:inputType="number"/>
+        android:layout_height="60dp"
+        android:ems="10"
+        android:focusable="false"
+        android:hint="@string/pick_due_date"
+        android:inputType="date" />
+
+    <EditText
+        android:id="@+id/descriptionEditText"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:ems="10"
+        android:hint="@string/description_placeholder"
+        android:inputType="textMultiLine" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/cancelButton"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Cancel" />
 
         <Button
             android:id="@+id/addTaskButton"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginTop="0dp"
             android:layout_weight="1"
             android:text="@string/add_task" />

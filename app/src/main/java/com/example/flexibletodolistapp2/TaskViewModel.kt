@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDate
 
 /**
  * View Model to keep a reference to the task repository and
@@ -19,6 +20,9 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
     //   the UI when the data actually changes.
     // - Repository is completely separated from the UI through the ViewModel.
     val allTasks: LiveData<List<Task>> = repository.allTasks
+    fun getLiveTaskById(taskId: Int): LiveData<Task?> {
+        return repository.getLiveTaskById(taskId)
+    }
 
     /**
      * Launching a new coroutine to insert the data in a non-blocking way
@@ -41,9 +45,9 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
         }
     }
 
-    fun markAsCompleted(taskId: Int) = viewModelScope.launch {
+    fun insertCompletion(task: Task, date: LocalDate) = viewModelScope.launch {
         withContext(Dispatchers.IO) {
-            repository.markTaskAsCompleted(taskId, true)
+            repository.insertCompletion(task.definition.id, date)
         }
     }
 }

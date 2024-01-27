@@ -11,6 +11,9 @@ import java.time.LocalDate
 class TaskRepository(private val taskDao: TaskDao) {
 
     val allTasks: LiveData<List<Task>> = taskDao.getTasks()
+    fun getLiveTaskById(taskId: Int): LiveData<Task?> {
+        return taskDao.getLiveTaskById(taskId)
+    }
 
     fun insertTask(task: TaskDefinition) {
         taskDao.insertTask(task)
@@ -22,33 +25,23 @@ class TaskRepository(private val taskDao: TaskDao) {
     }
 
     fun deleteTask(task: Task) {
+        Timber.d("Deleted task ID %s", task.definition.id)
         taskDao.deleteTask(task.definition)
     }
 
     fun insertCompletion(taskId: Int, completionDate: LocalDate) {
+        Timber.d("Add completion for task ID %s: %s", taskId, completionDate)
         val completion = CompletionDate(
             id = 0, // Insert methods treat 0 as not-set while inserting the item. (i.e. use
             taskId = taskId,
             date = completionDate
         )
-        taskDao.insertCompletion(completion)
+        val id = taskDao.insertCompletion(completion)
+        Timber.d("New ID %s", id)
     }
 
     fun deleteCompletion(completion: CompletionDate) {
+        Timber.d("Delete completion %s", completion)
         taskDao.deleteCompletion(completion)
-    }
-
-    fun markTaskAsCompleted(taskId: Int, isCompleted: Boolean) {
-        val taskDefinition = taskDao.getTaskById(taskId)?.definition
-        val updatedDefinition = taskDefinition?.copy(isCompleted = isCompleted)
-        if (updatedDefinition != null) {
-            taskDao.updateTask(updatedDefinition)
-        } else {
-            Timber.e("Failed to mark completed taskID %s", taskId)
-        }
-    }
-
-    fun getTaskById(taskId: Int): Task? {
-        return taskDao.getTaskById(taskId)
     }
 }

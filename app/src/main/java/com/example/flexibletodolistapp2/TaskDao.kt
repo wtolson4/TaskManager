@@ -23,6 +23,14 @@ interface TaskDao {
     @Query("SELECT * FROM TaskDefinition")
     fun getTasks(): LiveData<List<Task>>
 
+    @Transaction
+    @Query("SELECT * FROM TaskDefinition WHERE id = :taskId")
+    fun getLiveTaskById(taskId: Int): LiveData<Task?>
+
+    @Transaction
+    @Query("SELECT * FROM TaskDefinition WHERE id = :taskId")
+    fun getTaskById(taskId: Int): Task?
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertTask(task: TaskDefinition): Long
 
@@ -37,10 +45,6 @@ interface TaskDao {
 
     @Delete
     fun deleteCompletion(completion: CompletionDate)
-
-    @Transaction
-    @Query("SELECT * FROM TaskDefinition WHERE id = :taskId")
-    fun getTaskById(taskId: Int): Task?
 }
 
 class Converters {

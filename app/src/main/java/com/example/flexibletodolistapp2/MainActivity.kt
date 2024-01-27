@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         val factory = TaskViewModelFactory(repository)
 
         // Initialize ViewModel using the factory
-        viewModel = ViewModelProvider(this, factory).get(TaskViewModel::class.java)
+        viewModel = ViewModelProvider(this, factory)[TaskViewModel::class.java]
 
         // Reference UI components
         taskRecyclerView = findViewById(R.id.taskRecyclerView)

@@ -4,10 +4,10 @@ import android.app.DatePickerDialog
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -29,16 +29,34 @@ class AddTaskActivity : AppCompatActivity() {
         val factory = TaskViewModelFactory(repository)
         viewModel = ViewModelProvider(this, factory)[TaskViewModel::class.java]
 
+        val bundle = intent.extras
+        val existingId = bundle?.getInt("taskId")
+        val existingTask = existingId?.let { viewModel.getLiveTaskById(it) }
+
+        val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(
+            Locale.US // TODO: use device locale
+        )
+
         val taskNameEditText = findViewById<EditText>(R.id.taskNameEditText)
-        val selectedDateTextView = findViewById<TextView>(R.id.selectedDateTextView)
+        val descriptionEditText = findViewById<EditText>(R.id.descriptionEditText)
+        val selectedDateTextView = findViewById<TextView>(R.id.nextDueEditText)
         var selectedDate: LocalDate? = null
-        val pickDateButton = findViewById<Button>(R.id.pickDateButton)
+        val frequencyEditText = findViewById<EditText>(R.id.frequencyEditText)
         val addTaskButton = findViewById<Button>(R.id.addTaskButton)
         val cancelButton = findViewById<Button>(R.id.cancelButton)
-        val recurrenceTypeSpinner = findViewById<Spinner>(R.id.recurrenceTypeSpinner)
-        val frequencyEditText = findViewById<EditText>(R.id.frequencyEditText)
 
-        pickDateButton.setOnClickListener {
+        val taskObserver = Observer<Task?> { newTask ->
+            newTask?.let {
+                taskNameEditText.setText(it.definition.name)
+                descriptionEditText.setText(it.definition.description)
+                frequencyEditText.setText(it.definition.frequency.toString())
+                selectedDateTextView.text = it.definition.initialDueDate.format(dateFormatter)
+                selectedDate = it.definition.initialDueDate
+            }
+        }
+        existingTask?.observe(this, taskObserver)
+
+        selectedDateTextView.setOnClickListener {
             val calendar = Calendar.getInstance()
             val todayYear = calendar[Calendar.YEAR]
             val todayMonth = calendar[Calendar.MONTH]
@@ -47,9 +65,6 @@ class AddTaskActivity : AppCompatActivity() {
             val datePickerDialog = DatePickerDialog(this, { _, chosenYear, chosenMonth, chosenDay ->
                 val month1Index = chosenMonth + 1 // chosenMonth is 0-indexed
                 val localDate = LocalDate.of(chosenYear, month1Index, chosenDay)
-                val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(
-                    Locale.US // TODO: use device locale
-                )
                 selectedDateTextView.text = localDate.format(dateFormatter)
                 selectedDate = localDate
             }, todayYear, todayMonth, todayDay)
@@ -59,24 +74,25 @@ class AddTaskActivity : AppCompatActivity() {
 
         addTaskButton.setOnClickListener {
             val taskName = taskNameEditText.text.toString().trim()
+            val description = descriptionEditText.text.toString().trim()
             val dueDate = selectedDate
-            val recurrenceType = if (frequencyEditText.text.toString().toIntOrNull() == 1) {
-                recurrenceTypeSpinner.selectedItem.toString()
-            } else {
-                "${frequencyEditText.text} ${recurrenceTypeSpinner.selectedItem}"
-            }
             val frequency = frequencyEditText.text.toString().toIntOrNull() ?: 0
 
             if (taskName.isNotEmpty() && dueDate != null) {
                 val newTask = TaskDefinition(
-                    id = 0, // Insert methods treat 0 as not-set while inserting the item. (i.e. use
-                    taskName = taskName,
+                    id = existingId
+                        ?: 0, // Insert methods treat 0 as not-set while inserting the item. (i.e. use
+                    name = taskName,
+                    description,
+                    creationDate = LocalDate.now(),
                     initialDueDate = dueDate,
                     frequency = frequency,
-                    recurrenceType = recurrenceType,
-                    isCompleted = false
                 )
-                viewModel.insertTask(newTask)
+                if (existingId == null) {
+                    viewModel.insertTask(newTask)
+                } else {
+                    viewModel.update(newTask)
+                }
                 finish()
             } else {
                 Toast.makeText(this, "Please enter all details", Toast.LENGTH_SHORT).show()
