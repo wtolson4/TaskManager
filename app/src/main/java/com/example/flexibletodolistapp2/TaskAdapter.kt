@@ -23,14 +23,11 @@ class TaskAdapter(private val viewModel: TaskViewModel) : ListAdapter<Task, Task
             val taskDefinition = currentTask.definition
             taskNameTextView.text = taskDefinition.taskName
             val DATE_FORMATTER = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(
+                // TODO: use correct locale
                 Locale.US
             )
-            dueDateTextView.text = taskDefinition.initialDueDate.format(DATE_FORMATTER)
-            recurrenceTypeTextView.text = if (taskDefinition.frequency == 1) {
-                taskDefinition.recurrenceType
-            } else {
-                "${taskDefinition.frequency} ${taskDefinition.recurrenceType}"
-            }
+            dueDateTextView.text = currentTask.nextDueDate.format(DATE_FORMATTER)
+            recurrenceTypeTextView.text = "temp val 1"
             taskCompletionCheckBox.isChecked = taskDefinition.isCompleted
 
             taskCompletionCheckBox.setOnCheckedChangeListener { _, isChecked ->

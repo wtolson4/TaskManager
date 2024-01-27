@@ -3,12 +3,16 @@ package com.example.flexibletodolistapp2
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import java.time.LocalDate
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.encodeToString
 import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
-import java.util.Locale
+
+/**
+ * The Room Magic is in this file, where you map a method call to an SQL query.
+ *
+ * When you are using complex data types, such as Date, you have to also supply type converters.
+ * To keep this example basic, no types that require type converters are used.
+ * See the documentation at
+ * https://developer.android.com/topic/libraries/architecture/room.html#type-converters
+ */
 
 @Dao
 interface TaskDao {
@@ -20,10 +24,19 @@ interface TaskDao {
     fun getTasks(): LiveData<List<Task>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insert(task: TaskDefinition): Long
+    fun insertTask(task: TaskDefinition): Long
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun insertCompletion(completion: CompletionDate): Long
 
     @Update
-    fun update(task: TaskDefinition)
+    fun updateTask(task: TaskDefinition)
+
+    @Delete
+    fun deleteTask(task: TaskDefinition)
+
+    @Delete
+    fun deleteCompletion(completion: CompletionDate)
 
     @Transaction
     @Query("SELECT * FROM TaskDefinition WHERE id = :taskId")

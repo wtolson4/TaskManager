@@ -76,7 +76,7 @@ class AddTaskActivity : AppCompatActivity() {
                     recurrenceType = recurrenceType,
                     isCompleted = false
                 )
-                viewModel.insert(newTask)
+                viewModel.insertTask(newTask)
                 finish()
             } else {
                 Toast.makeText(this, "Please enter all details", Toast.LENGTH_SHORT).show()
