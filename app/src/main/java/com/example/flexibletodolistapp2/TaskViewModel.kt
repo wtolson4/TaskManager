@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.recyclerview.widget.DiffUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -22,6 +23,10 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
     val allTasks: LiveData<List<Task>> = repository.allTasks
     fun getLiveTaskById(taskId: Int): LiveData<Task?> {
         return repository.getLiveTaskById(taskId)
+    }
+
+    fun getLiveCompletionsByTaskId(taskId: Int): LiveData<List<CompletionDate>> {
+        return repository.getLiveCompletionsByTaskId(taskId)
     }
 
     /**
@@ -59,5 +64,27 @@ class TaskViewModelFactory(private val repository: TaskRepository) : ViewModelPr
             return TaskViewModel(repository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
+    }
+}
+
+class TaskDiffCallback : DiffUtil.ItemCallback<Task>() {
+
+    override fun areItemsTheSame(oldItem: Task, newItem: Task): Boolean {
+        return oldItem.definition.id == newItem.definition.id
+    }
+
+    override fun areContentsTheSame(oldItem: Task, newItem: Task): Boolean {
+        return oldItem == newItem
+    }
+}
+
+class CompletionDiffCallback : DiffUtil.ItemCallback<CompletionDate>() {
+
+    override fun areItemsTheSame(oldItem: CompletionDate, newItem: CompletionDate): Boolean {
+        return oldItem.id == newItem.id
+    }
+
+    override fun areContentsTheSame(oldItem: CompletionDate, newItem: CompletionDate): Boolean {
+        return oldItem == newItem
     }
 }

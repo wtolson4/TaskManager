@@ -9,6 +9,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -16,19 +18,21 @@ import java.util.Calendar
 import java.util.Locale
 
 
-class AddTaskActivity : AppCompatActivity() {
+class EditTaskActivity : AppCompatActivity() {
 
     private lateinit var viewModel: TaskViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_task)
+        setContentView(R.layout.activity_edit_task)
 
         val dao = AppDatabase.getDatabase(this).taskDao()
         val repository = TaskRepository(dao)
         val factory = TaskViewModelFactory(repository)
+        // Initialize ViewModel using the factory
         viewModel = ViewModelProvider(this, factory)[TaskViewModel::class.java]
 
+        // Get data passed into this activity
         val bundle = intent.extras
         val existingId = bundle?.getInt("taskId")
         val existingTask = existingId?.let { viewModel.getLiveTaskById(it) }
@@ -37,21 +41,33 @@ class AddTaskActivity : AppCompatActivity() {
             Locale.US // TODO: use device locale
         )
 
+        // Reference UI components
         val taskNameEditText = findViewById<EditText>(R.id.taskNameEditText)
         val descriptionEditText = findViewById<EditText>(R.id.descriptionEditText)
         val selectedDateTextView = findViewById<TextView>(R.id.nextDueEditText)
         var selectedDate: LocalDate? = null
         val frequencyEditText = findViewById<EditText>(R.id.frequencyEditText)
-        val addTaskButton = findViewById<Button>(R.id.addTaskButton)
+        val completionsRecyclerView = findViewById<RecyclerView>(R.id.completionsRecyclerView)
+        val addTaskButton = findViewById<Button>(R.id.saveTaskButton)
         val cancelButton = findViewById<Button>(R.id.cancelButton)
 
-        val taskObserver = Observer<Task?> { newTask ->
-            newTask?.let {
+        val taskObserver = Observer<Task?> { incomingTask ->
+            incomingTask?.let {
                 taskNameEditText.setText(it.definition.name)
                 descriptionEditText.setText(it.definition.description)
                 frequencyEditText.setText(it.definition.frequency.toString())
                 selectedDateTextView.text = it.definition.initialDueDate.format(dateFormatter)
                 selectedDate = it.definition.initialDueDate
+
+                // Set up the completions RecyclerView
+                completionsRecyclerView.layoutManager = LinearLayoutManager(this)
+                val completionsAdapter = CompletionsAdapter(viewModel)  // Pass the viewModel here
+                completionsRecyclerView.adapter = completionsAdapter
+                // Observe changes in the data and update the RecyclerView
+                viewModel.getLiveCompletionsByTaskId(incomingTask.definition.id)
+                    .observe(this) { completions ->
+                        completionsAdapter.submitList(completions)
+                    }
             }
         }
         existingTask?.observe(this, taskObserver)

@@ -1,18 +1,9 @@
 <resources>
     <string name="app_name">FlexibleToDoListApp2</string>
-    <string name="add_task">Add Task</string>
+    <string name="save_task">Save Task</string>
     <string name="task_name_placeholder">Task Name</string>
     <string name="task_date_placeholder">MM/DD/YYYY</string>
     <string name="description_placeholder">Description</string>
-
+    <string name="completions_list">Log</string>
     <string name="pick_due_date">Select Initial Due Date</string>
-
-    <string-array name="recurrence_types">
-        <item>NONE</item>
-        <item>DAILY</item>
-        <item>WEEKLY</item>
-        <item>BIWEEKLY</item>
-        <item>MONTHLY</item>
-        <item>BIYEARLY</item>
-    </string-array>
 </resources>

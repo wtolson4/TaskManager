@@ -1,7 +1,14 @@
 package com.example.flexibletodolistapp2
 
 import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.TypeConverter
+import androidx.room.Update
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -28,6 +35,10 @@ interface TaskDao {
     fun getLiveTaskById(taskId: Int): LiveData<Task?>
 
     @Transaction
+    @Query("SELECT * FROM completion_date_table WHERE taskId = :taskId")
+    fun getLiveCompletionsByTaskId(taskId: Int): LiveData<List<CompletionDate>>
+
+    @Transaction
     @Query("SELECT * FROM TaskDefinition WHERE id = :taskId")
     fun getTaskById(taskId: Int): Task?
 
@@ -50,7 +61,7 @@ interface TaskDao {
 class Converters {
     @TypeConverter
     fun fromTimestamp(value: String): LocalDate {
-        return  LocalDate.parse(value, DateTimeFormatter.ISO_LOCAL_DATE)
+        return LocalDate.parse(value, DateTimeFormatter.ISO_LOCAL_DATE)
     }
 
     @TypeConverter

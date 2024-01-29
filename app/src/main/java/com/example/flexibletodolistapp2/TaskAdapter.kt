@@ -8,7 +8,6 @@ import android.widget.CheckBox
 import android.widget.TextView
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import timber.log.Timber
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -35,12 +34,11 @@ class TaskAdapter(private val viewModel: TaskViewModel) :
             recurrenceTypeTextView.text = "temp val 1"
 
             taskCompletionCheckBox.setOnCheckedChangeListener { _, isChecked ->
-                Timber.d("calling onCheck")
                 viewModel.insertCompletion(currentTask, LocalDate.now())
             }
 
             itemView.setOnClickListener {
-                val intent = Intent(itemView.context, AddTaskActivity::class.java)
+                val intent = Intent(itemView.context, EditTaskActivity::class.java)
                 intent.putExtra("taskId", currentTask.definition.id)
                 itemView.context.startActivity(intent)
             }
