@@ -64,10 +64,7 @@ class EditTaskActivity : AppCompatActivity() {
                 val completionsAdapter = CompletionsAdapter(viewModel)  // Pass the viewModel here
                 completionsRecyclerView.adapter = completionsAdapter
                 // Observe changes in the data and update the RecyclerView
-                viewModel.getLiveCompletionsByTaskId(incomingTask.definition.id)
-                    .observe(this) { completions ->
-                        completionsAdapter.submitList(completions)
-                    }
+                completionsAdapter.submitList(incomingTask.completions)
             }
         }
         existingTask?.observe(this, taskObserver)

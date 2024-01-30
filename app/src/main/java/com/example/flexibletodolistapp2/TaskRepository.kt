@@ -15,10 +15,6 @@ class TaskRepository(private val taskDao: TaskDao) {
         return taskDao.getLiveTaskById(taskId)
     }
 
-    fun getLiveCompletionsByTaskId(taskId: Int): LiveData<List<CompletionDate>> {
-        return taskDao.getLiveCompletionsByTaskId(taskId)
-    }
-
     fun insertTask(task: TaskDefinition) {
         taskDao.insertTask(task)
     }
@@ -33,12 +29,13 @@ class TaskRepository(private val taskDao: TaskDao) {
         taskDao.deleteTask(task.definition)
     }
 
-    fun insertCompletion(taskId: Int, completionDate: LocalDate) {
+    fun insertCompletion(taskId: Int, completionDate: LocalDate, frequencyWhenCompleted: Int) {
         Timber.d("Add completion for task ID %s: %s", taskId, completionDate)
         val completion = CompletionDate(
             id = 0, // Insert methods treat 0 as not-set while inserting the item. (i.e. use
             taskId = taskId,
-            date = completionDate
+            date = completionDate,
+            frequencyWhenCompleted = frequencyWhenCompleted,
         )
         val id = taskDao.insertCompletion(completion)
         Timber.d("New ID %s", id)

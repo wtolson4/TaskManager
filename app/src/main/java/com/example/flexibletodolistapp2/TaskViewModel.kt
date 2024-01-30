@@ -3,6 +3,7 @@ package com.example.flexibletodolistapp2
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.DiffUtil
 import kotlinx.coroutines.Dispatchers
@@ -11,8 +12,7 @@ import kotlinx.coroutines.withContext
 import java.time.LocalDate
 
 /**
- * View Model to keep a reference to the task repository and
- * an up-to-date list of all words.
+ * View Model to keep a reference to the task repository and an up-to-date list of tasks.
  */
 
 class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
@@ -20,13 +20,20 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
     // - We can put an observer on the data (instead of polling for changes) and only update the
     //   the UI when the data actually changes.
     // - Repository is completely separated from the UI through the ViewModel.
-    val allTasks: LiveData<List<Task>> = repository.allTasks
-    fun getLiveTaskById(taskId: Int): LiveData<Task?> {
-        return repository.getLiveTaskById(taskId)
+    private val _allTasks: LiveData<List<Task>> = repository.allTasks
+    private fun sortCompletionsByDate(t: Task): Task {
+        val newCompletions = t.completions.sortedBy { it.date }
+        return t.copy(completions = newCompletions)
     }
 
-    fun getLiveCompletionsByTaskId(taskId: Int): LiveData<List<CompletionDate>> {
-        return repository.getLiveCompletionsByTaskId(taskId)
+    val allTasks: LiveData<List<Task>> =
+        this._allTasks.map { tasks ->
+            val withSortedCompletions = tasks.map { sortCompletionsByDate(it) }
+            withSortedCompletions.sortedBy { it.urgency }
+        }
+
+    fun getLiveTaskById(taskId: Int): LiveData<Task?> {
+        return repository.getLiveTaskById(taskId).map { it?.let { sortCompletionsByDate(it) } }
     }
 
     /**
@@ -50,11 +57,16 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
         }
     }
 
-    fun insertCompletion(task: Task, date: LocalDate) = viewModelScope.launch {
-        withContext(Dispatchers.IO) {
-            repository.insertCompletion(task.definition.id, date)
+    fun insertCompletion(task: Task, date: LocalDate) =
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                repository.insertCompletion(
+                    taskId = task.definition.id,
+                    completionDate = date,
+                    frequencyWhenCompleted = task.definition.frequency
+                )
+            }
         }
-    }
 }
 
 class TaskViewModelFactory(private val repository: TaskRepository) : ViewModelProvider.Factory {

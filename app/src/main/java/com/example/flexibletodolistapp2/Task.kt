@@ -33,6 +33,7 @@ data class CompletionDate(
     @PrimaryKey(autoGenerate = true) val id: Int,
     val taskId: Int,
     val date: LocalDate,
+    val frequencyWhenCompleted: Int,
 )
 
 // https://developer.android.com/training/data-storage/room/relationships

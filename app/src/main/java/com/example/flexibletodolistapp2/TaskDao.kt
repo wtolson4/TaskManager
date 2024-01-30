@@ -34,14 +34,6 @@ interface TaskDao {
     @Query("SELECT * FROM TaskDefinition WHERE id = :taskId")
     fun getLiveTaskById(taskId: Int): LiveData<Task?>
 
-    @Transaction
-    @Query("SELECT * FROM completion_date_table WHERE taskId = :taskId")
-    fun getLiveCompletionsByTaskId(taskId: Int): LiveData<List<CompletionDate>>
-
-    @Transaction
-    @Query("SELECT * FROM TaskDefinition WHERE id = :taskId")
-    fun getTaskById(taskId: Int): Task?
-
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertTask(task: TaskDefinition): Long
 
