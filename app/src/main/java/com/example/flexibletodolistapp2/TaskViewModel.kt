@@ -67,6 +67,12 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
                 )
             }
         }
+
+    fun deleteCompletion(completion: CompletionDate) = viewModelScope.launch {
+        withContext(Dispatchers.IO) {
+            repository.deleteCompletion(completion)
+        }
+    }
 }
 
 class TaskViewModelFactory(private val repository: TaskRepository) : ViewModelProvider.Factory {

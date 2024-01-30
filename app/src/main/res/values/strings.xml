@@ -1,9 +1,17 @@
 <resources>
     <string name="app_name">FlexibleToDoListApp2</string>
     <string name="save_task">Save Task</string>
+    <string name="cancel">Cancel</string>
+    <string name="add_completion">Log Completion</string>
+
     <string name="task_name_placeholder">Task Name</string>
     <string name="task_date_placeholder">MM/DD/YYYY</string>
     <string name="description_placeholder">Description</string>
     <string name="completions_list">Log</string>
-    <string name="pick_due_date">Select Initial Due Date</string>
+    <string name="initial_due_date">Initial Due Date</string>
+    <string name="next_due_date">Next Due Date</string>
+    <string name="select_date">Select Date</string>
+    <string name="delete_occurence_dialog_title">Delete this completion?</string>
+    <string name="delete_occurence_dialog_decline">Cancel</string>
+    <string name="delete_occurence_dialog_accept">Delete</string>
 </resources>
