@@ -1,5 +1,6 @@
 package com.example.flexibletodolistapp2
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -20,7 +21,7 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
     // - We can put an observer on the data (instead of polling for changes) and only update the
     //   the UI when the data actually changes.
     // - Repository is completely separated from the UI through the ViewModel.
-    private val _allTasks: LiveData<List<Task>> = repository.allTasks
+    private val _allTasks: LiveData<List<Task>> = repository.allTasksLive
     private fun sortCompletionsByDate(t: Task): Task {
         val newCompletions = t.completions.sortedBy { it.date }
         return t.copy(completions = newCompletions)
@@ -39,21 +40,24 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
     /**
      * Launching a new coroutine to insert the data in a non-blocking way
      */
-    fun insertTask(task: TaskDefinition) = viewModelScope.launch {
+    fun insertTask(task: TaskDefinition, context: Context) = viewModelScope.launch {
         withContext(Dispatchers.IO) {
             repository.insertTask(task)
+            AppAlarmManager().setAlarm(context)
         }
     }
 
-    fun update(task: TaskDefinition) = viewModelScope.launch {
+    fun update(task: TaskDefinition, context: Context) = viewModelScope.launch {
         withContext(Dispatchers.IO) {
             repository.updateTask(task)
+            AppAlarmManager().setAlarm(context)
         }
     }
 
-    fun delete(task: Task) = viewModelScope.launch {
+    fun delete(task: Task, context: Context) = viewModelScope.launch {
         withContext(Dispatchers.IO) {
             repository.deleteTask(task)
+            AppAlarmManager().setAlarm(context)
         }
     }
 

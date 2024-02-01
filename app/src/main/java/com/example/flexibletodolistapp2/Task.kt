@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 
@@ -64,8 +65,13 @@ data class Task(
             return ChronoUnit.DAYS.between(today, this.nextDueDate).toInt()
         }
 
-    // TODO: impl
+    // TODO: impl urgency
     val urgency: Int
         get() = 0
+
+    fun nextNotification(lastNotification: LocalDateTime): LocalDateTime {
+        // TODO: nextNotification should be based on the task's notification rules + lastNotification
+        return LocalDateTime.now()
+    }
 
 }

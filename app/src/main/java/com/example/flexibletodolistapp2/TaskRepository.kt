@@ -10,13 +10,19 @@ import java.time.LocalDate
  */
 class TaskRepository(private val taskDao: TaskDao) {
 
-    val allTasks: LiveData<List<Task>> = taskDao.getTasks()
+    val allTasksLive: LiveData<List<Task>> = taskDao.getTasksLive()
+    fun getAllTasks(): List<Task> {
+        return taskDao.getTasks()
+    }
+
     fun getLiveTaskById(taskId: Int): LiveData<Task?> {
         return taskDao.getLiveTaskById(taskId)
     }
 
-    fun insertTask(task: TaskDefinition) {
-        taskDao.insertTask(task)
+
+    fun insertTask(task: TaskDefinition): Task? {
+        val id = taskDao.insertTask(task)
+        return taskDao.getTaskById(id)
     }
 
     fun updateTask(task: TaskDefinition) {

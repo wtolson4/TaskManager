@@ -4,10 +4,10 @@
     <!--https://github.com/material-components/material-components-android/blob/master/docs/components/TopAppBar.md#action-items-attributes-->
 
     <item
-        android:id="@+id/editButton"
-        android:title="@string/edit"
-        android:icon="@drawable/baseline_edit_24"
+        android:id="@+id/deleteButton"
+        android:icon="@drawable/baseline_delete_24"
         app:iconTint="?attr/colorOnSurfaceVariant"
+        android:title="@string/delete"
         app:showAsAction="ifRoom" />
 
 </menu>

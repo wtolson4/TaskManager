@@ -20,7 +20,6 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
-import java.util.Locale
 
 
 class ViewTaskActivity : AppCompatActivity() {
@@ -41,9 +40,7 @@ class ViewTaskActivity : AppCompatActivity() {
         val existingId = bundle?.getInt("taskId")
         val existingTask = existingId?.let { viewModel.getLiveTaskById(it) }
 
-        val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(
-            Locale.US // TODO: use device locale
-        )
+        val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)
 
         // Reference UI components
         val taskNameEditText = findViewById<EditText>(R.id.taskNameEditText)
@@ -107,10 +104,7 @@ class CompletionsAdapter(private val viewModel: TaskViewModel) :
             itemView.findViewById(R.id.recurrenceTimelinessTextView)
 
         fun bind(currentCompletion: CompletionDate, viewModel: TaskViewModel) {
-            val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(
-                // TODO: use correct locale
-                Locale.US
-            )
+            val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)
             recurrenceDateTextView.text = currentCompletion.date.format(dateFormatter)
 
             // TODO: add "timeliness" of this completion
@@ -119,12 +113,12 @@ class CompletionsAdapter(private val viewModel: TaskViewModel) :
 
             itemView.setOnClickListener {
                 MaterialAlertDialogBuilder(context)
-                    .setTitle(R.string.delete_occurence_dialog_title)
+                    .setTitle(R.string.delete_occurrence_dialog_title)
                     .setMessage(currentCompletion.date.format(dateFormatter))
-                    .setNegativeButton(R.string.delete_occurence_dialog_decline) { dialog, which ->
+                    .setNegativeButton(R.string.dialog_cancel) { dialog, which ->
                         // Respond to negative button press
                     }
-                    .setPositiveButton(R.string.delete_occurence_dialog_accept) { dialog, which ->
+                    .setPositiveButton(R.string.dialog_delete) { dialog, which ->
                         viewModel.deleteCompletion(currentCompletion)
                     }
                     .show()

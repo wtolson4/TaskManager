@@ -1,5 +1,6 @@
 package com.example.flexibletodolistapp2
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -8,12 +9,13 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.menu.ActionMenuItemView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
-import java.util.Locale
 
 
 class EditTaskActivity : AppCompatActivity() {
@@ -35,9 +37,7 @@ class EditTaskActivity : AppCompatActivity() {
         val existingId = bundle?.getInt("taskId")
         val existingTask = existingId?.let { viewModel.getLiveTaskById(it) }
 
-        val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(
-            Locale.US // TODO: use device locale
-        )
+        val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)
 
         // Reference UI components
         val taskNameEditText = findViewById<EditText>(R.id.taskNameEditText)
@@ -48,6 +48,7 @@ class EditTaskActivity : AppCompatActivity() {
         val frequencyEditText = findViewById<EditText>(R.id.frequencyEditText)
         val addTaskButton = findViewById<Button>(R.id.saveTaskButton)
         val cancelButton = findViewById<Button>(R.id.cancelButton)
+        val deleteButton = findViewById<ActionMenuItemView>(R.id.deleteButton)
 
         // Task saving logic
         val saveTask = {
@@ -67,9 +68,9 @@ class EditTaskActivity : AppCompatActivity() {
                     frequency = frequency,
                 )
                 if (existingId == null) {
-                    viewModel.insertTask(newTask)
+                    viewModel.insertTask(newTask, baseContext)
                 } else {
-                    viewModel.update(newTask)
+                    viewModel.update(newTask, baseContext)
                 }
                 Toast.makeText(this, "Task saved", Toast.LENGTH_SHORT).show()
                 true
@@ -99,6 +100,23 @@ class EditTaskActivity : AppCompatActivity() {
                 frequencyEditText.setText(it.definition.frequency.toString())
                 nextDueEditText.text = it.nextDueDate.format(dateFormatter)
                 initialDueDate = it.definition.initialDueDate
+
+                // Delete task button
+                deleteButton.setOnClickListener {
+                    MaterialAlertDialogBuilder(this)
+                        .setTitle(R.string.delete_task_dialog_title)
+                        .setMessage(incomingTask.definition.name)
+                        .setNegativeButton(R.string.dialog_cancel) { dialog, which ->
+                            // Respond to negative button press
+                        }
+                        .setPositiveButton(R.string.dialog_delete) { dialog, which ->
+                            viewModel.delete(incomingTask, baseContext)
+                            Toast.makeText(this, "Task deleted", Toast.LENGTH_SHORT).show()
+                            // TODO: use jetpack navigation, replace activities with fragments: https://developer.android.com/guide/navigation/migrate
+                            navigateUpTo(Intent(baseContext, MainActivity::class.java))
+                        }
+                        .show()
+                }
             }
         }
         existingTask?.observe(this, taskObserver)
@@ -117,7 +135,5 @@ class EditTaskActivity : AppCompatActivity() {
         cancelButton.setOnClickListener {
             finish()  // Simply finishes the activity to return to the previous screen.
         }
-
-
     }
 }

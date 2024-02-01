@@ -28,11 +28,19 @@ interface TaskDao {
     // https://developer.android.com/training/data-storage/room/relationships#one-to-many
     @Transaction
     @Query("SELECT * FROM TaskDefinition")
-    fun getTasks(): LiveData<List<Task>>
+    fun getTasksLive(): LiveData<List<Task>>
+
+    @Transaction
+    @Query("SELECT * FROM TaskDefinition")
+    fun getTasks(): List<Task>
 
     @Transaction
     @Query("SELECT * FROM TaskDefinition WHERE id = :taskId")
     fun getLiveTaskById(taskId: Int): LiveData<Task?>
+
+    @Transaction
+    @Query("SELECT * FROM TaskDefinition WHERE id = :taskId")
+    fun getTaskById(taskId: Long): Task?
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertTask(task: TaskDefinition): Long
