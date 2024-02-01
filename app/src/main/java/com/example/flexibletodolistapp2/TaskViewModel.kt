@@ -29,7 +29,7 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
     val allTasks: LiveData<List<Task>> =
         this._allTasks.map { tasks ->
             val withSortedCompletions = tasks.map { sortCompletionsByDate(it) }
-            withSortedCompletions.sortedBy { it.urgency }
+            withSortedCompletions.sortedBy { it.daysUntilDue }
         }
 
     fun getLiveTaskById(taskId: Int): LiveData<Task?> {

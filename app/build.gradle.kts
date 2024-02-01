@@ -26,7 +26,10 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
 
         getByName("debug") {
@@ -56,6 +59,7 @@ dependencies {
     implementation("androidx.room:room-ktx:2.6.1") // Updated to latest version
     ksp("androidx.room:room-compiler:2.6.1") // Updated to latest version
     testImplementation("junit:junit:4.13.2")
+    implementation("androidx.preference:preference-ktx:1.2.0")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.5.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

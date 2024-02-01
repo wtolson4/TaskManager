@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <!--https://github.com/material-components/material-components-android/blob/master/docs/components/TopAppBar.md#action-items-attributes-->
+
+    <item
+        android:id="@+id/editButton"
+        android:title="@string/edit"
+        android:icon="@drawable/baseline_edit_24"
+        android:iconTint="?attr/colorOnSurfaceVariant"
+        app:showAsAction="ifRoom" />
+
+</menu>

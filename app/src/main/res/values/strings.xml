@@ -3,7 +3,6 @@
     <string name="save_task">Save Task</string>
     <string name="cancel">Cancel</string>
     <string name="add_completion">Log Completion</string>
-
     <string name="task_name_placeholder">Task Name</string>
     <string name="task_date_placeholder">MM/DD/YYYY</string>
     <string name="description_placeholder">Description</string>
@@ -14,4 +13,12 @@
     <string name="delete_occurence_dialog_title">Delete this completion?</string>
     <string name="delete_occurence_dialog_decline">Cancel</string>
     <string name="delete_occurence_dialog_accept">Delete</string>
+    <string name="app_title">Regularly Remastered</string>
+    <string name="due_today">due today</string>
+    <string name="due_tomorrow">due tomorrow</string>
+    <string name="due_in_n_days">due in %1$d days</string>
+    <string name="due_one_day_ago">due 1 day ago</string>
+    <string name="due_n_days_ago">due %1$d days ago</string>
+    <string name="edit">edit</string>
+    <string name="settings_title">Settings</string>
 </resources>

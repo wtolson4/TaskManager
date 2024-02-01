@@ -1,70 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:layout_marginVertical="8dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/taskNameTextView"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
-
-        <TextView
-            android:id="@+id/taskNameTextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/task_name_placeholder"
-            android:textSize="16sp"/>
-
-        <TextView
-            android:id="@+id/recurrenceTypeTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textSize="14sp"
-            android:textColor="@android:color/darker_gray"/>
-    </LinearLayout>
+        android:layout_weight="1"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/dueDateTextView"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="14sp"
+        android:layout_weight="0"
         android:textColor="@android:color/darker_gray"
-        android:layout_marginTop="4dp"/>
+        android:textSize="14sp" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginTop="8dp">
 
-        <CheckBox
-            android:id="@+id/taskCompletionCheckBox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"/>
-
-        <!-- Add contentDescription for accessibility or set to @null if decorative -->
-        <ImageView
-            android:id="@+id/editTaskImageView"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:padding="8dp"
-            android:layout_marginEnd="8dp"
-            android:contentDescription="@null"/>
-
-        <!-- Add contentDescription for accessibility or set to @null if decorative -->
-        <ImageView
-            android:id="@+id/deleteTaskImageView"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:padding="8dp"
-            android:contentDescription="@null"/>
-    </LinearLayout>
 </LinearLayout>

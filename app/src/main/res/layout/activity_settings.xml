@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -16,31 +14,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="?attr/actionBarSize"
-            app:title="@string/app_title"
+            app:title="@string/settings_title"
             app:menu="@menu/top_app_bar_main"
             app:titleCentered="true"
-            app:navigationIcon="@drawable/baseline_menu_24"
+            app:navigationIcon="@drawable/baseline_arrow_back_24"
             app:navigationIconTint="?attr/colorOnSurface" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- RecyclerView to display tasks -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/taskRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginHorizontal="16dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-    <!-- FloatingActionButton to add a new task -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/addTaskButton"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/settings_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:contentDescription="@string/save_task"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,11 +1,11 @@
 package com.example.flexibletodolistapp2
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -16,15 +16,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
-import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: TaskViewModel
+    private lateinit var topAppBarView: MaterialToolbar
     private lateinit var taskRecyclerView: RecyclerView
     private lateinit var addTaskButton: FloatingActionButton
 
@@ -42,8 +40,10 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, factory)[TaskViewModel::class.java]
 
         // Reference UI components
+        topAppBarView = findViewById(R.id.topAppBar)
         taskRecyclerView = findViewById(R.id.taskRecyclerView)
         addTaskButton = findViewById(R.id.addTaskButton)
+        val topAppBar = findViewById<MaterialToolbar>(R.id.topAppBar)
 
         // Set up the RecyclerView
         taskRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
 
         // Add margins to handle the edge-to-edge
         // https://developer.android.com/develop/ui/views/layout/edge-to-edge
-        ViewCompat.setOnApplyWindowInsetsListener(taskRecyclerView) { view, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(topAppBarView) { view, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             // Apply the insets as a margin to the view.
             view.updateLayoutParams<ViewGroup.MarginLayoutParams> {
@@ -84,35 +84,43 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, EditTaskActivity::class.java)
             startActivity(intent)
         }
+
+        // Set click listener for top app bar navigation button
+        topAppBar.setNavigationOnClickListener {
+            val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
+        }
     }
 }
 
 class TaskAdapter(private val viewModel: TaskViewModel) :
     ListAdapter<Task, TaskAdapter.TaskViewHolder>(TaskDiffCallback()) {
 
-    class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class TaskViewHolder(itemView: View, private val context: Context) :
+        RecyclerView.ViewHolder(itemView) {
         private val taskNameTextView: TextView = itemView.findViewById(R.id.taskNameTextView)
         private val dueDateTextView: TextView = itemView.findViewById(R.id.dueDateTextView)
-        private val recurrenceTypeTextView: TextView =
-            itemView.findViewById(R.id.recurrenceTypeTextView)
-        private val taskCompletionCheckBox: CheckBox =
-            itemView.findViewById(R.id.taskCompletionCheckBox)
 
         fun bind(currentTask: Task, viewModel: TaskViewModel) {
             taskNameTextView.text = currentTask.definition.name
-            val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(
-                // TODO: use correct locale
-                Locale.US
-            )
-            dueDateTextView.text = currentTask.nextDueDate.format(dateFormatter)
-            recurrenceTypeTextView.text = "temp val 1"
+            val dueDays = currentTask.daysUntilDue
+            dueDateTextView.text = when {
+                (dueDays < -1) -> String.format(
+                    context.getString(R.string.due_n_days_ago),
+                    -dueDays
+                )
 
-            taskCompletionCheckBox.setOnCheckedChangeListener { _, isChecked ->
-                viewModel.insertCompletion(currentTask, LocalDate.now())
+                (dueDays == -1) -> context.getString(R.string.due_one_day_ago)
+                (dueDays == 0) -> context.getString(R.string.due_today)
+                (dueDays == 1) -> context.getString(R.string.due_tomorrow)
+                else -> String.format(
+                    context.getString(R.string.due_in_n_days),
+                    dueDays
+                )
             }
 
             itemView.setOnClickListener {
-                val intent = Intent(itemView.context, EditTaskActivity::class.java)
+                val intent = Intent(itemView.context, ViewTaskActivity::class.java)
                 intent.putExtra("taskId", currentTask.definition.id)
                 itemView.context.startActivity(intent)
             }
@@ -123,7 +131,7 @@ class TaskAdapter(private val viewModel: TaskViewModel) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.list_item_task, parent, false)
-        return TaskViewHolder(view)
+        return TaskViewHolder(view, parent.context)
     }
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
