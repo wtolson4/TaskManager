@@ -10,10 +10,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.datepicker.MaterialDatePicker
-import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
@@ -22,22 +19,6 @@ import java.util.Locale
 class EditTaskActivity : AppCompatActivity() {
 
     private lateinit var viewModel: TaskViewModel
-
-    private fun promptForDate(initializer: LocalDate?, callback: (LocalDate) -> Unit) {
-        val initialDate = initializer?.atStartOfDay(
-            ZoneOffset.UTC
-        )?.toInstant()?.toEpochMilli() ?: MaterialDatePicker.todayInUtcMilliseconds()
-        val datePicker =
-            MaterialDatePicker.Builder.datePicker()
-                .setTitleText(R.string.select_date)
-                .setSelection(initialDate)
-                .build()
-        datePicker.addOnPositiveButtonClickListener {
-            val localDate = Instant.ofEpochMilli(it).atZone(ZoneOffset.UTC).toLocalDate()
-            callback(localDate)
-        }
-        datePicker.show(supportFragmentManager, "materialDatePicker")
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -21,4 +21,5 @@
     <string name="due_n_days_ago">due %1$d days ago</string>
     <string name="edit">edit</string>
     <string name="settings_title">Settings</string>
+    <string name="frequency">Period (days)</string>
 </resources>

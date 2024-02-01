@@ -43,7 +43,6 @@ class MainActivity : AppCompatActivity() {
         topAppBarView = findViewById(R.id.topAppBar)
         taskRecyclerView = findViewById(R.id.taskRecyclerView)
         addTaskButton = findViewById(R.id.addTaskButton)
-        val topAppBar = findViewById<MaterialToolbar>(R.id.topAppBar)
 
         // Set up the RecyclerView
         taskRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -86,7 +85,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Set click listener for top app bar navigation button
-        topAppBar.setNavigationOnClickListener {
+        topAppBarView.setNavigationOnClickListener {
             val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent)
         }
