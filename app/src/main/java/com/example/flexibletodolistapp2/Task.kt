@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 import androidx.room.Relation
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 
 
@@ -70,8 +71,18 @@ data class Task(
         get() = 0
 
     fun nextNotification(lastNotification: LocalDateTime): LocalDateTime {
-        // TODO: nextNotification should be based on the task's notification rules + lastNotification
-        return LocalDateTime.now()
+        val nextNotifDate = if (nextDueDate > lastNotification.toLocalDate()) {
+            // Due date is in the future, notify on due date
+            nextDueDate
+        } else {
+            // Due date is in the past, calculate next notification date
+            // TODO: nextNotification date should be based on the task's notification rules
+            LocalDate.now()
+        }
+
+        // TODO: notification time should be based on the task's notification rule
+        val time = LocalTime.now().plusSeconds(30)
+        return nextNotifDate.atTime(time)
     }
 
 }

@@ -72,7 +72,7 @@ class ViewTaskActivity : AppCompatActivity() {
                 // Button for adding more completions
                 logCompletionButton.setOnClickListener {
                     createDatePicker(null) { localDate ->
-                        viewModel.insertCompletion(incomingTask, localDate)
+                        viewModel.insertCompletion(incomingTask, localDate, baseContext)
                     }.show(supportFragmentManager, "materialDatePicker")
                 }
 

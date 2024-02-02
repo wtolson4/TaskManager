@@ -35,7 +35,7 @@
         </activity>
 
         <receiver
-            android:name=".BootOrTzReceiver"
+            android:name=".NotificationManager$AppBroadcastReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
@@ -43,9 +43,6 @@
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
             </intent-filter>
         </receiver>
-        <receiver
-            android:name=".AppAlarmManager$MyAlarm"
-            android:exported="false" />
     </application>
 
 </manifest>

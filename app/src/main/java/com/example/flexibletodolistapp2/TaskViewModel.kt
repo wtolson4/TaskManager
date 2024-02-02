@@ -43,25 +43,25 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
     fun insertTask(task: TaskDefinition, context: Context) = viewModelScope.launch {
         withContext(Dispatchers.IO) {
             repository.insertTask(task)
-            AppAlarmManager().setAlarm(context)
+            NotificationManager().updateNotificationsAndAlarms(context)
         }
     }
 
     fun update(task: TaskDefinition, context: Context) = viewModelScope.launch {
         withContext(Dispatchers.IO) {
             repository.updateTask(task)
-            AppAlarmManager().setAlarm(context)
+            NotificationManager().updateNotificationsAndAlarms(context)
         }
     }
 
     fun delete(task: Task, context: Context) = viewModelScope.launch {
         withContext(Dispatchers.IO) {
             repository.deleteTask(task)
-            AppAlarmManager().setAlarm(context)
+            NotificationManager().updateNotificationsAndAlarms(context)
         }
     }
 
-    fun insertCompletion(task: Task, date: LocalDate) =
+    fun insertCompletion(task: Task, date: LocalDate, context: Context) =
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 repository.insertCompletion(
@@ -69,6 +69,7 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
                     completionDate = date,
                     frequencyWhenCompleted = task.definition.frequency
                 )
+                NotificationManager().updateNotificationsAndAlarms(context)
             }
         }
 
