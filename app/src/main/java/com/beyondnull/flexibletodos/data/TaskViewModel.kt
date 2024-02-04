@@ -1,4 +1,4 @@
-package com.beyondnull.flexibletodos
+package com.beyondnull.flexibletodos.data
 
 import android.content.Context
 import androidx.lifecycle.LiveData
@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.DiffUtil
+import com.beyondnull.flexibletodos.AppNotificationManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -43,21 +44,21 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
     fun insertTask(task: TaskDefinition, context: Context) = viewModelScope.launch {
         withContext(Dispatchers.IO) {
             repository.insertTask(task)
-            NotificationManager().updateNotificationsAndAlarms(context)
+            AppNotificationManager().updateNotificationsAndAlarms(context)
         }
     }
 
     fun update(task: TaskDefinition, context: Context) = viewModelScope.launch {
         withContext(Dispatchers.IO) {
             repository.updateTask(task)
-            NotificationManager().updateNotificationsAndAlarms(context)
+            AppNotificationManager().updateNotificationsAndAlarms(context)
         }
     }
 
     fun delete(task: Task, context: Context) = viewModelScope.launch {
         withContext(Dispatchers.IO) {
             repository.deleteTask(task)
-            NotificationManager().updateNotificationsAndAlarms(context)
+            AppNotificationManager().updateNotificationsAndAlarms(context)
         }
     }
 
@@ -69,13 +70,14 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
                     completionDate = date,
                     frequencyWhenCompleted = task.definition.frequency
                 )
-                NotificationManager().updateNotificationsAndAlarms(context)
+                AppNotificationManager().updateNotificationsAndAlarms(context)
             }
         }
 
-    fun deleteCompletion(completion: CompletionDate) = viewModelScope.launch {
+    fun deleteCompletion(completion: CompletionDate, context: Context) = viewModelScope.launch {
         withContext(Dispatchers.IO) {
             repository.deleteCompletion(completion)
+            AppNotificationManager().updateNotificationsAndAlarms(context)
         }
     }
 }

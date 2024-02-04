@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FlexibleToDoListApp2</string>
+    <string name="app_name">Regularly Remastered</string>
     <string name="save_task">Save Task</string>
     <string name="cancel">Cancel</string>
     <string name="add_completion">Log Completion</string>
@@ -16,7 +16,7 @@
     <string name="due_today">due today</string>
     <string name="due_tomorrow">due tomorrow</string>
     <string name="due_in_n_days">due in %1$d days</string>
-    <string name="due_one_day_ago">due 1 day ago</string>
+    <string name="due_one_day_ago">due yesterday</string>
     <string name="due_n_days_ago">due %1$d days ago</string>
     <string name="edit">edit</string>
     <string name="settings_title">Settings</string>
@@ -26,4 +26,9 @@
     <string name="notification_time_name">Notification time</string>
     <string name="notification_time_description">Time of day to send notification</string>
     <string name="select_time">Select time</string>
+    <string name="notification_channel_name">Task Notifications</string>
+    <string name="notification_channel_description">Tasks that are due will send a notification here.</string>
+    <string name="notification_action_mark_as_done">Mark done</string>
+    <string name="notification_frequency_name">Notification frequency</string>
+    <string name="notification_frequency_description">Scaling factor for notification frequency</string>
 </resources>

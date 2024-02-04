@@ -1,4 +1,4 @@
-package com.beyondnull.flexibletodos
+package com.beyondnull.flexibletodos.data
 
 import androidx.lifecycle.LiveData
 import timber.log.Timber
@@ -13,6 +13,10 @@ class TaskRepository(private val taskDao: TaskDao) {
     val allTasksLive: LiveData<List<Task>> = taskDao.getTasksLive()
     fun getAllTasks(): List<Task> {
         return taskDao.getTasks()
+    }
+
+    fun getTaskById(taskId: Int): Task? {
+        return taskDao.getTaskById(taskId.toLong())
     }
 
     fun getLiveTaskById(taskId: Int): LiveData<Task?> {
@@ -43,8 +47,7 @@ class TaskRepository(private val taskDao: TaskDao) {
             date = completionDate,
             frequencyWhenCompleted = frequencyWhenCompleted,
         )
-        val id = taskDao.insertCompletion(completion)
-        Timber.d("New ID %s", id)
+        taskDao.insertCompletion(completion)
     }
 
     fun deleteCompletion(completion: CompletionDate) {

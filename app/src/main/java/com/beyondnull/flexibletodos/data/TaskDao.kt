@@ -1,4 +1,4 @@
-package com.beyondnull.flexibletodos
+package com.beyondnull.flexibletodos.data
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao

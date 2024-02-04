@@ -15,14 +15,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.beyondnull.flexibletodos.AppDatabase
-import com.beyondnull.flexibletodos.CompletionDate
-import com.beyondnull.flexibletodos.CompletionDiffCallback
 import com.beyondnull.flexibletodos.R
-import com.beyondnull.flexibletodos.Task
-import com.beyondnull.flexibletodos.TaskRepository
-import com.beyondnull.flexibletodos.TaskViewModel
-import com.beyondnull.flexibletodos.TaskViewModelFactory
+import com.beyondnull.flexibletodos.data.AppDatabase
+import com.beyondnull.flexibletodos.data.CompletionDate
+import com.beyondnull.flexibletodos.data.CompletionDiffCallback
+import com.beyondnull.flexibletodos.data.Task
+import com.beyondnull.flexibletodos.data.TaskRepository
+import com.beyondnull.flexibletodos.data.TaskViewModel
+import com.beyondnull.flexibletodos.data.TaskViewModelFactory
 import com.beyondnull.flexibletodos.picker.createDatePicker
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -59,7 +59,7 @@ class ViewTaskActivity : AppCompatActivity() {
         val completionsRecyclerView = findViewById<RecyclerView>(R.id.completionsRecyclerView)
         val topAppBar = findViewById<MaterialToolbar>(R.id.topAppBar)
 
-        // Fill in data for modifying existing task
+        // Fill in data for viewing existing task
         val taskObserver = Observer<Task?> { incomingTask ->
             incomingTask?.let {
                 // Fill in data
@@ -135,7 +135,7 @@ class CompletionsAdapter(private val viewModel: TaskViewModel) :
                         // Respond to negative button press
                     }
                     .setPositiveButton(R.string.dialog_delete) { dialog, which ->
-                        viewModel.deleteCompletion(currentCompletion)
+                        viewModel.deleteCompletion(currentCompletion, context)
                     }
                     .show()
             }

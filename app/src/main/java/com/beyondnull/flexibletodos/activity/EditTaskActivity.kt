@@ -1,6 +1,9 @@
 package com.beyondnull.flexibletodos.activity
 
+import android.annotation.TargetApi
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -8,19 +11,21 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.beyondnull.flexibletodos.AppDatabase
 import com.beyondnull.flexibletodos.R
-import com.beyondnull.flexibletodos.Task
-import com.beyondnull.flexibletodos.TaskDefinition
-import com.beyondnull.flexibletodos.TaskRepository
-import com.beyondnull.flexibletodos.TaskViewModel
-import com.beyondnull.flexibletodos.TaskViewModelFactory
+import com.beyondnull.flexibletodos.data.AppDatabase
+import com.beyondnull.flexibletodos.data.Task
+import com.beyondnull.flexibletodos.data.TaskDefinition
+import com.beyondnull.flexibletodos.data.TaskRepository
+import com.beyondnull.flexibletodos.data.TaskViewModel
+import com.beyondnull.flexibletodos.data.TaskViewModelFactory
 import com.beyondnull.flexibletodos.picker.createDatePicker
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import timber.log.Timber
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -154,6 +159,51 @@ class EditTaskActivity : AppCompatActivity() {
         }
         cancelButton.setOnClickListener {
             finish()  // Simply finishes the activity to return to the previous screen.
+        }
+
+        // First, get notification permissions
+        checkAndRequestNotificationPermissions()
+    }
+
+    @TargetApi(Build.VERSION_CODES.TIRAMISU)
+    fun checkAndRequestNotificationPermissions() {
+        val permission = android.Manifest.permission.POST_NOTIFICATIONS
+
+        // Register the permissions callback, which handles the user's response to the
+        // system permissions dialog. Save the return value, an instance of
+        // ActivityResultLauncher. You can use either a val, as shown in this snippet,
+        // or a lateinit var in your onAttach() or onCreate() method.
+        val requestPermissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                // Permission is granted. Continue the action or workflow in your
+                // app. No-op for this app.
+            } else {
+                // Explain to the user that the feature is unavailable because the
+                // features requires a permission that the user has denied. At the
+                // same time, respect the user's decision. Don't link to system
+                // settings in an effort to convince the user to change their
+                // decision.
+                Toast.makeText(
+                    this,
+                    "Task Due notification unavailable because permission is denied",
+                    Toast.LENGTH_LONG
+                ).show()
+                Timber.w("User denied notifications permission prompt")
+            }
+        }
+        if (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED
+        ) {
+            // Permission granted, no-op.
+        } else {
+            if (shouldShowRequestPermissionRationale(permission)
+            ) {
+                // TODO: show rationale first before launchin launcher to request permission
+            } else {
+                // first request or forever denied case
+                requestPermissionLauncher.launch(permission)
+            }
         }
     }
 }

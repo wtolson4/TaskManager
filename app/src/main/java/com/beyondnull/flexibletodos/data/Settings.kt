@@ -1,4 +1,4 @@
-package com.beyondnull.flexibletodos
+package com.beyondnull.flexibletodos.data
 
 import android.content.Context
 import androidx.preference.PreferenceManager

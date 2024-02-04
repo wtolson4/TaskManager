@@ -1,4 +1,4 @@
-package com.beyondnull.flexibletodos
+package com.beyondnull.flexibletodos.picker
 
 import android.content.Context
 import android.util.AttributeSet
@@ -7,12 +7,15 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
-import com.beyondnull.flexibletodos.picker.createTimePicker
+import com.beyondnull.flexibletodos.AppNotificationManager
+import com.beyondnull.flexibletodos.R
+import com.beyondnull.flexibletodos.data.Settings
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 // A custom preference to show a time picker
-class TimePickerPreference(context: Context, attrs: AttributeSet?) : Preference(context, attrs),
+class PreferenceRowNotificationTime(context: Context, attrs: AttributeSet?) :
+    Preference(context, attrs),
     View.OnClickListener {
     private val formatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
     private lateinit var view: TextView
@@ -40,6 +43,7 @@ class TimePickerPreference(context: Context, attrs: AttributeSet?) : Preference(
         // Show the time picker
         createTimePicker(currentTime) {
             Settings.NotificationTime.set(context, it)
+            AppNotificationManager().updateNotificationsAndAlarms(context)
 
             view.text =
                 String.format(

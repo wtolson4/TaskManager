@@ -1,5 +1,5 @@
 // AppDatabase.kt
-package com.beyondnull.flexibletodos
+package com.beyondnull.flexibletodos.data
 
 import android.content.Context
 import androidx.room.Database

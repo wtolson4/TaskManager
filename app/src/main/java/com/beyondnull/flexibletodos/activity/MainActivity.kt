@@ -16,13 +16,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.beyondnull.flexibletodos.AppDatabase
 import com.beyondnull.flexibletodos.R
-import com.beyondnull.flexibletodos.Task
-import com.beyondnull.flexibletodos.TaskDiffCallback
-import com.beyondnull.flexibletodos.TaskRepository
-import com.beyondnull.flexibletodos.TaskViewModel
-import com.beyondnull.flexibletodos.TaskViewModelFactory
+import com.beyondnull.flexibletodos.data.AppDatabase
+import com.beyondnull.flexibletodos.data.Task
+import com.beyondnull.flexibletodos.data.TaskDiffCallback
+import com.beyondnull.flexibletodos.data.TaskRepository
+import com.beyondnull.flexibletodos.data.TaskViewModel
+import com.beyondnull.flexibletodos.data.TaskViewModelFactory
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -109,21 +109,7 @@ class TaskAdapter(private val viewModel: TaskViewModel) :
 
         fun bind(currentTask: Task, viewModel: TaskViewModel) {
             taskNameTextView.text = currentTask.definition.name
-            val dueDays = currentTask.daysUntilDue
-            dueDateTextView.text = when {
-                (dueDays < -1) -> String.format(
-                    context.getString(R.string.due_n_days_ago),
-                    -dueDays
-                )
-
-                (dueDays == -1) -> context.getString(R.string.due_one_day_ago)
-                (dueDays == 0) -> context.getString(R.string.due_today)
-                (dueDays == 1) -> context.getString(R.string.due_tomorrow)
-                else -> String.format(
-                    context.getString(R.string.due_in_n_days),
-                    dueDays
-                )
-            }
+            dueDateTextView.text = currentTask.getDueDaysString(context)
 
             itemView.setOnClickListener {
                 val intent = Intent(itemView.context, ViewTaskActivity::class.java)

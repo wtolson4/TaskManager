@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+<PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <SwitchPreferenceCompat
-        app:key="notifications"
-        app:title="Enable message notifications" />
-
-    <Preference
-        app:key="feedback"
-        app:title="Send feedback"
-        app:summary="Report technical issues or suggest new features" />
-
-    <com.beyondnull.flexibletodos.TimePickerPreference
+    <com.beyondnull.flexibletodos.picker.PreferenceRowNotificationTime
         android:layout="@layout/preference_row_time_picker"
+        android:selectable="true" />
+
+        <com.beyondnull.flexibletodos.picker.PreferenceRowNotificationFrequency
+        android:layout="@layout/preference_row_frequency_picker"
         android:selectable="true" />
 </PreferenceScreen>

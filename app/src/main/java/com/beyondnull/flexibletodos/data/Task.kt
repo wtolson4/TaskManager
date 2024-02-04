@@ -1,10 +1,11 @@
-package com.beyondnull.flexibletodos
+package com.beyondnull.flexibletodos.data
 
 import android.content.Context
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Relation
+import com.beyondnull.flexibletodos.R
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -72,6 +73,24 @@ data class Task(
             return ChronoUnit.DAYS.between(today, this.nextDueDate).toInt()
         }
 
+
+    fun getDueDaysString(context: Context): String {
+        return when {
+            (daysUntilDue < -1) -> String.format(
+                context.getString(R.string.due_n_days_ago),
+                -daysUntilDue
+            )
+
+            (daysUntilDue == -1) -> context.getString(R.string.due_one_day_ago)
+            (daysUntilDue == 0) -> context.getString(R.string.due_today)
+            (daysUntilDue == 1) -> context.getString(R.string.due_tomorrow)
+            else -> String.format(
+                context.getString(R.string.due_in_n_days),
+                daysUntilDue
+            )
+        }
+    }
+
     // TODO: impl urgency
     val urgency: Int
         get() = 0
@@ -84,9 +103,11 @@ data class Task(
             } else {
                 // Due date is in the past
                 val daysSinceDue = Period.between(nextDueDate, LocalDate.now()).days
-                // TODO: if using the global frequency, this should be scaled to the task due frequency
                 val notificationFrequency =
-                    definition.notificationFrequency ?: Settings.NotificationFrequency.get(context)
+                    definition.notificationFrequency ?: scaleGlobalFrequency(
+                        definition.frequency,
+                        Settings.NotificationFrequency.get(context)
+                    )
                 val remainder = daysSinceDue % notificationFrequency
                 val lastNotification = LocalDate.now().minusDays(remainder.toLong())
                 if (lastNotification > definition.notificationLastDismissed) lastNotification
@@ -97,4 +118,8 @@ data class Task(
         return nextNotificationDate.atTime(time)
     }
 
+    fun scaleGlobalFrequency(taskFrequency: Int, globalFrequency: Int): Int {
+        // TODO: if using the global frequency, this should be scaled to the task due frequency
+        return taskFrequency * 7 / globalFrequency
+    }
 }
