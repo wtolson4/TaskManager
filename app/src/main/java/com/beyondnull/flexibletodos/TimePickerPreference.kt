@@ -4,10 +4,9 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
-import com.beyondnull.flexibletodos.R
-import com.beyondnull.flexibletodos.activity.MainActivity
 import com.beyondnull.flexibletodos.picker.createTimePicker
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -26,12 +25,13 @@ class TimePickerPreference(context: Context, attrs: AttributeSet?) : Preference(
         // Format the time
         view.text =
             String.format(
-                context.getString(R.string.notification_time_description),
-                "~${formatter.format(currentTime)}"
+                context.getString(R.string.notification_time_description)
+                        +
+                        ": ${formatter.format(currentTime)}"
             )
 
         // Set the click listener
-        holder.findViewById(R.id.timePickerPreferenceRow).setOnClickListener(this)
+        holder.itemView.setOnClickListener(this)
     }
 
     override fun onClick(v: View) {
@@ -43,10 +43,11 @@ class TimePickerPreference(context: Context, attrs: AttributeSet?) : Preference(
 
             view.text =
                 String.format(
-                    context.getString(R.string.notification_time_description),
-                    "~${formatter.format(it)}"
+                    context.getString(R.string.notification_time_description)
+                            +
+                            ": ${formatter.format(it)}"
                 )
-        }.show((context as MainActivity).supportFragmentManager, "materialTimePicker")
+        }.show((context as AppCompatActivity).supportFragmentManager, "materialTimePicker")
     }
 
 }

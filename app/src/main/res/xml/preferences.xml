@@ -11,7 +11,7 @@
         app:title="Send feedback"
         app:summary="Report technical issues or suggest new features" />
 
-    <TimePickerPreference
+    <com.beyondnull.flexibletodos.TimePickerPreference
         android:layout="@layout/preference_row_time_picker"
         android:selectable="true" />
 </PreferenceScreen>
