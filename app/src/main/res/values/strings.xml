@@ -31,4 +31,5 @@
     <string name="notification_action_mark_as_done">Mark done</string>
     <string name="notification_frequency_name">Notification frequency</string>
     <string name="notification_frequency_description">Scaling factor for notification frequency</string>
+    <string name="next_notification_date">Next Notification Date</string>
 </resources>

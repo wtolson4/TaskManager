@@ -129,8 +129,7 @@ class AppNotificationManager {
             }
             // notificationId is a unique int for each notification that you must define.
             notify(task.definition.id, notification)
-            // Use an impossibly high ID for this summary notification
-            notify(Int.MAX_VALUE - 20, summaryNotification)
+            notify(notificationIdForGroup, summaryNotification)
         }
 
 
@@ -142,14 +141,22 @@ class AppNotificationManager {
         val repository = TaskRepository(dao)
 
         // Check for any notifications that should be firing
+        var anyNotifsPresent = false
         for (task in repository.getAllTasks()) {
             if (task.nextNotification(context) < LocalDateTime.now()) {
                 createNotification(context, task)
+                anyNotifsPresent = true
             } else {
                 // Clear all other notification
                 with(NotificationManagerCompat.from(context)) {
                     cancel(task.definition.id)
                 }
+            }
+        }
+        if (!anyNotifsPresent) {
+            // Clear group
+            with(NotificationManagerCompat.from(context)) {
+                cancel(notificationIdForGroup)
             }
         }
 
@@ -276,5 +283,7 @@ class AppNotificationManager {
         const val notificationActionMarkAsDone = BuildConfig.APPLICATION_ID + ".markAsDone"
         const val notificationActionCancelled = BuildConfig.APPLICATION_ID + ".swipedAway"
         const val notificationExtraTaskIdKey = "taskId"
+        const val notificationIdForGroup =
+            Int.MAX_VALUE - 20 // Use an impossibly high ID for this summary notification
     }
 }

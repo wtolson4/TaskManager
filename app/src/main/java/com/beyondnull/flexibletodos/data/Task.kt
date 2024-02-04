@@ -120,6 +120,6 @@ data class Task(
 
     fun scaleGlobalFrequency(taskFrequency: Int, globalFrequency: Int): Int {
         // TODO: if using the global frequency, this should be scaled to the task due frequency
-        return taskFrequency * 7 / globalFrequency
+        return (globalFrequency / (taskFrequency * 7)).coerceAtLeast(1)
     }
 }

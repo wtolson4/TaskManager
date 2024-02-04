@@ -54,6 +54,7 @@ class ViewTaskActivity : AppCompatActivity() {
         val taskNameEditText = findViewById<EditText>(R.id.taskNameEditText)
         val descriptionEditText = findViewById<EditText>(R.id.descriptionEditText)
         val nextDueEditText = findViewById<TextView>(R.id.nextDueEditText)
+        val nextNotificationEditText = findViewById<TextView>(R.id.nextNotificationEditText)
         val frequencyEditText = findViewById<EditText>(R.id.frequencyEditText)
         val logCompletionButton = findViewById<Button>(R.id.addCompletionButton)
         val completionsRecyclerView = findViewById<RecyclerView>(R.id.completionsRecyclerView)
@@ -68,6 +69,8 @@ class ViewTaskActivity : AppCompatActivity() {
                 descriptionEditText.setText(it.definition.description)
                 frequencyEditText.setText(it.definition.frequency.toString())
                 nextDueEditText.text = it.nextDueDate.format(dateFormatter)
+                nextNotificationEditText.text =
+                    it.nextNotification(baseContext).format(dateFormatter)
 
                 // Set up the completions RecyclerView
                 completionsRecyclerView.layoutManager = LinearLayoutManager(this)

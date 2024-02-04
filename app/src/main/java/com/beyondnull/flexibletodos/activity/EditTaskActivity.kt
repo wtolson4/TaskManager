@@ -79,9 +79,9 @@ class EditTaskActivity : AppCompatActivity() {
                     creationDate = LocalDate.now(),
                     initialDueDate = dueDate,
                     frequency = frequency,
-                    notificationLastDismissed = null,
-                    notificationTime = null,
-                    notificationFrequency = null
+                    notificationLastDismissed = existingTask?.value?.definition?.notificationLastDismissed,
+                    notificationTime = existingTask?.value?.definition?.notificationTime,
+                    notificationFrequency = existingTask?.value?.definition?.notificationFrequency
                 )
                 if (existingId == null) {
                     viewModel.insertTask(newTask, baseContext)
