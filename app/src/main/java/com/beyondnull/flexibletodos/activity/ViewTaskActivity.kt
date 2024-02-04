@@ -1,4 +1,4 @@
-package com.example.flexibletodolistapp2
+package com.beyondnull.flexibletodos.activity
 
 import android.content.Context
 import android.content.Intent
@@ -15,6 +15,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.beyondnull.flexibletodos.AppDatabase
+import com.beyondnull.flexibletodos.CompletionDate
+import com.beyondnull.flexibletodos.CompletionDiffCallback
+import com.beyondnull.flexibletodos.R
+import com.beyondnull.flexibletodos.Task
+import com.beyondnull.flexibletodos.TaskRepository
+import com.beyondnull.flexibletodos.TaskViewModel
+import com.beyondnull.flexibletodos.TaskViewModelFactory
+import com.beyondnull.flexibletodos.picker.createDatePicker
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.time.format.DateTimeFormatter

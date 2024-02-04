@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.flexibletodolistapp2"
+    namespace = "com.beyondnull.flexibletodos"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.flexibletodolistapp2"
+        applicationId = "com.beyondnull.flexibletodos"
         minSdk = 26
         targetSdk = 34
         versionCode = 1

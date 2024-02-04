@@ -23,4 +23,7 @@
     <string name="frequency">Period (days)</string>
     <string name="delete">delete</string>
     <string name="delete_task_dialog_title">Delete this task?</string>
+    <string name="notification_time_name">Notification time</string>
+    <string name="notification_time_description">Time of day to send notification</string>
+    <string name="select_time">Select time</string>
 </resources>

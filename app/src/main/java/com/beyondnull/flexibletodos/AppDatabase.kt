@@ -1,5 +1,5 @@
 // AppDatabase.kt
-package com.example.flexibletodolistapp2
+package com.beyondnull.flexibletodos
 
 import android.content.Context
 import androidx.room.Database
@@ -9,7 +9,11 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [TaskDefinition::class, CompletionDate::class], version = 2, exportSchema = false)
+@Database(
+    entities = [TaskDefinition::class, CompletionDate::class],
+    version = 2,
+    exportSchema = false
+)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 

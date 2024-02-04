@@ -1,6 +1,7 @@
-package com.example.flexibletodolistapp2
+package com.beyondnull.flexibletodos
 
 import android.app.Application
+import com.beyondnull.flexibletodos.BuildConfig
 import timber.log.Timber
 
 class MainApplication : Application() {
@@ -8,7 +9,7 @@ class MainApplication : Application() {
         super.onCreate()
 
         // Initialize the Timber logging lib
-        if(BuildConfig.DEBUG){
+        if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
     }

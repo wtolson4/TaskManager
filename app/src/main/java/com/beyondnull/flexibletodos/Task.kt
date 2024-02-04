@@ -1,4 +1,4 @@
-package com.example.flexibletodolistapp2
+package com.beyondnull.flexibletodos
 
 import androidx.room.Embedded
 import androidx.room.Entity
@@ -28,6 +28,9 @@ data class TaskDefinition(
     val creationDate: LocalDate,
     val initialDueDate: LocalDate,
     val frequency: Int,
+    val notificationLastDismissed: LocalDate?,
+    val notificationTime: LocalTime?,
+    val notificationFrequency: Int?,
 )
 
 @Entity(tableName = "completion_date_table")
@@ -75,8 +78,8 @@ data class Task(
             // Due date is in the future, notify on due date
             nextDueDate
         } else {
-            // Due date is in the past, calculate next notification date
-            // TODO: nextNotification date should be based on the task's notification rules
+            // Due date is in the past, calculate next notification date based on last notification dismissal
+            this.definition.notificationLastDismissed
             LocalDate.now()
         }
 

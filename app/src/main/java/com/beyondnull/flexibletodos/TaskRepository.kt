@@ -1,4 +1,4 @@
-package com.example.flexibletodolistapp2
+package com.beyondnull.flexibletodos
 
 import androidx.lifecycle.LiveData
 import timber.log.Timber

@@ -1,4 +1,4 @@
-package com.example.flexibletodolistapp2
+package com.beyondnull.flexibletodos.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -11,6 +11,14 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.beyondnull.flexibletodos.AppDatabase
+import com.beyondnull.flexibletodos.R
+import com.beyondnull.flexibletodos.Task
+import com.beyondnull.flexibletodos.TaskDefinition
+import com.beyondnull.flexibletodos.TaskRepository
+import com.beyondnull.flexibletodos.TaskViewModel
+import com.beyondnull.flexibletodos.TaskViewModelFactory
+import com.beyondnull.flexibletodos.picker.createDatePicker
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.time.LocalDate
@@ -66,6 +74,9 @@ class EditTaskActivity : AppCompatActivity() {
                     creationDate = LocalDate.now(),
                     initialDueDate = dueDate,
                     frequency = frequency,
+                    notificationLastDismissed = null,
+                    notificationTime = null,
+                    notificationFrequency = null
                 )
                 if (existingId == null) {
                     viewModel.insertTask(newTask, baseContext)

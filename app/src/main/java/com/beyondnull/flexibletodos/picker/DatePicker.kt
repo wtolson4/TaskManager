@@ -1,5 +1,6 @@
-package com.example.flexibletodolistapp2
+package com.beyondnull.flexibletodos.picker
 
+import com.beyondnull.flexibletodos.R
 import com.google.android.material.datepicker.MaterialDatePicker
 import java.time.Instant
 import java.time.LocalDate

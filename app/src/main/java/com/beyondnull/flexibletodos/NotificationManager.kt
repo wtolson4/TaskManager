@@ -1,4 +1,4 @@
-package com.example.flexibletodolistapp2
+package com.beyondnull.flexibletodos
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -6,11 +6,11 @@ import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import androidx.preference.PreferenceManager
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.io.FileNotFoundException
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -98,22 +98,25 @@ class NotificationManager {
     }
 
     private class LatestNotificationStorage {
-        private val storagePath = "last_notification.txt"
+        private val preferenceName = "last_notification"
         private val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+
         fun get(context: Context): LocalDateTime {
-            return try {
-                val read = context.openFileInput(storagePath).bufferedReader().readText()
-                LocalDateTime.parse(read, formatter)
-            } catch (e: FileNotFoundException) {
-                Timber.d("No recorded last notification time")
-                LocalDateTime.MIN
-            }
+            val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+            return preferences.getString(preferenceName, null)
+                ?.let { LocalDateTime.parse(it, formatter) }
+                ?: run {
+                    Timber.d("No recorded last notification time")
+                    LocalDateTime.MIN
+                }
         }
 
         fun set(context: Context, dateTime: LocalDateTime) {
-            val fileContents = dateTime.format(formatter)
-            context.openFileOutput(storagePath, Context.MODE_PRIVATE).use {
-                it.write(fileContents.toByteArray())
+            val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+            val contents = dateTime.format(formatter)
+            with(preferences.edit()) {
+                putString(preferenceName, contents)
+                apply()
             }
         }
     }

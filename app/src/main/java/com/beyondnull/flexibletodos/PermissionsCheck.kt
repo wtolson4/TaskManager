@@ -1,4 +1,4 @@
-package com.example.flexibletodolistapp2
+package com.beyondnull.flexibletodos
 
 import android.content.Context
 import java.security.Permission

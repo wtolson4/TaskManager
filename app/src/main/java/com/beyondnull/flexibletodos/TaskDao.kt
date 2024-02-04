@@ -1,4 +1,4 @@
-package com.example.flexibletodolistapp2
+package com.beyondnull.flexibletodos
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
@@ -10,6 +10,7 @@ import androidx.room.Transaction
 import androidx.room.TypeConverter
 import androidx.room.Update
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 /**
@@ -67,6 +68,16 @@ class Converters {
     @TypeConverter
     fun dateToTimestamp(date: LocalDate): String {
         return date.format(DateTimeFormatter.ISO_LOCAL_DATE)
+    }
+
+    @TypeConverter
+    fun fromTimeString(value: String): LocalTime {
+        return LocalTime.parse(value, DateTimeFormatter.ISO_LOCAL_TIME)
+    }
+
+    @TypeConverter
+    fun timeToString(time: LocalTime): String {
+        return time.format(DateTimeFormatter.ISO_LOCAL_TIME)
     }
 }
 
