@@ -1,5 +1,6 @@
 package com.beyondnull.flexibletodos
 
+import android.content.Context
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -7,7 +8,9 @@ import androidx.room.Relation
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.Period
 import java.time.temporal.ChronoUnit
+import java.util.Objects.isNull
 
 
 /**
@@ -73,18 +76,24 @@ data class Task(
     val urgency: Int
         get() = 0
 
-    fun nextNotification(lastNotification: LocalDateTime): LocalDateTime {
-        val nextNotificationDate = if (nextDueDate > lastNotification.toLocalDate()) {
-            // Due date is in the future, notify on due date
-            nextDueDate
-        } else {
-            // Due date is in the past, calculate next notification date based on last notification dismissal
-            this.definition.notificationLastDismissed
-            LocalDate.now()
-        }
+    fun nextNotification(context: Context): LocalDateTime {
+        val nextNotificationDate =
+            if (isNull(definition.notificationLastDismissed) || nextDueDate > definition.notificationLastDismissed) {
+                // Due date is in the future, notify on due date
+                nextDueDate
+            } else {
+                // Due date is in the past
+                val daysSinceDue = Period.between(nextDueDate, LocalDate.now()).days
+                // TODO: if using the global frequency, this should be scaled to the task due frequency
+                val notificationFrequency =
+                    definition.notificationFrequency ?: Settings.NotificationFrequency.get(context)
+                val remainder = daysSinceDue % notificationFrequency
+                val lastNotification = LocalDate.now().minusDays(remainder.toLong())
+                if (lastNotification > definition.notificationLastDismissed) lastNotification
+                else lastNotification.plusDays(notificationFrequency.toLong())
+            }
 
-        // TODO: notification time should be based on the task's notification rule
-        val time = LocalTime.now().plusSeconds(30)
+        val time = this.definition.notificationTime ?: Settings.NotificationTime.get(context)
         return nextNotificationDate.atTime(time)
     }
 

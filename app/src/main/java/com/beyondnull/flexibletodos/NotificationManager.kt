@@ -18,40 +18,42 @@ import kotlin.coroutines.EmptyCoroutineContext
 
 class NotificationManager {
     fun updateNotificationsAndAlarms(context: Context) {
-        val latestNotification = LatestNotificationStorage().get(context)
-        calculateCurrentNotifications(context, latestNotification)
-        val now = LocalDateTime.now()
-        LatestNotificationStorage().set(context, now)
-        val nextAlarmTime = calculateNextNotificationTime(context, now)
-        setAlarmInternal(context, nextAlarmTime)
+        val desiredNotifications = calculateCurrentNotifications(context)
+        // TODO: fire notifications
+        Timber.e(
+            "Would fire notifications for: %s",
+            desiredNotifications.joinToString(','.toString()) { it.definition.name }
+        )
+
+        when (val it = calculateNextNotificationTime(context)) {
+            null -> Timber.i("No future alarms expected")
+            else -> setAlarmInternal(context, it)
+        }
     }
 
-    private fun calculateCurrentNotifications(context: Context, latestNotification: LocalDateTime) {
+    private fun calculateCurrentNotifications(context: Context): List<Task> {
         // Global app data
         val dao = AppDatabase.getDatabase(context).taskDao()
         val repository = TaskRepository(dao)
 
-        // Check for any notifications that should have fired between last notification and now
-        val expiredTasks = repository.getAllTasks()
-            .filter { it.nextNotification(latestNotification) < LocalDateTime.now() }
-        // TODO: fire notifications
-        Timber.e(
-            "Would fire notifications for: %s",
-            expiredTasks.joinToString(','.toString()) { it.definition.name }
-        )
+        // Check for any notifications that should be firing
+        return repository.getAllTasks()
+            .filter { it.nextNotification(context) < LocalDateTime.now() }
     }
 
     private fun calculateNextNotificationTime(
         context: Context,
-        latestNotification: LocalDateTime
-    ): LocalDateTime {
+    ): LocalDateTime? {
         // Global app data
         val dao = AppDatabase.getDatabase(context).taskDao()
         val repository = TaskRepository(dao)
 
         // Find the next alarm time
-        return repository.getAllTasks().minBy { it.nextNotification(latestNotification) }
-            .nextNotification(latestNotification)
+        return repository.getAllTasks()
+            // Only future alarms
+            .filter { it.nextNotification(context) > LocalDateTime.now() }
+            .minBy { it.nextNotification(context) }
+            ?.nextNotification(context)
     }
 
     private fun setAlarmInternal(context: Context, nextAlarmTime: LocalDateTime) {

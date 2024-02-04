@@ -13,7 +13,6 @@ class Settings {
             private val formatter = DateTimeFormatter.ISO_LOCAL_TIME
             private val default = LocalTime.of(10, 0)
             fun get(context: Context): LocalTime {
-                val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
                 val preferences = PreferenceManager.getDefaultSharedPreferences(context)
                 return preferences.getString(key, null)
                     ?.let { LocalTime.parse(it, formatter) }
@@ -32,7 +31,23 @@ class Settings {
     }
 
 
-    class Other {
+    class NotificationFrequency {
 
+        companion object {
+            private const val key = "global_notification_frequency"
+            private const val default = 7
+            fun get(context: Context): Int {
+                val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+                return preferences.getInt(key, default)
+            }
+
+            fun set(context: Context, frequency: Int) {
+                val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+                with(preferences.edit()) {
+                    putInt(key, frequency)
+                    apply()
+                }
+            }
+        }
     }
 }
