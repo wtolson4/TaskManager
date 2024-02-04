@@ -91,7 +91,7 @@ class ViewTaskActivity : AppCompatActivity() {
                             val intent =
                                 Intent(baseContext, EditTaskActivity::class.java)
                             intent.putExtra("taskId", incomingTask.definition.id)
-                            baseContext.startActivity(intent)
+                            startActivity(intent)
                             true
                         }
 
