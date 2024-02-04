@@ -4,7 +4,6 @@
     <string name="cancel">Cancel</string>
     <string name="add_completion">Log Completion</string>
     <string name="task_name_placeholder">Task Name</string>
-    <string name="task_date_placeholder">MM/DD/YYYY</string>
     <string name="description_placeholder">Description</string>
     <string name="completions_list">Log</string>
     <string name="initial_due_date">Initial Due Date</string>

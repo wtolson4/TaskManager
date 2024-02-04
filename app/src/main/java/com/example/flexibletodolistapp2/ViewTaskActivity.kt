@@ -10,7 +10,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.view.menu.ActionMenuItemView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -49,7 +48,6 @@ class ViewTaskActivity : AppCompatActivity() {
         val frequencyEditText = findViewById<EditText>(R.id.frequencyEditText)
         val logCompletionButton = findViewById<Button>(R.id.addCompletionButton)
         val completionsRecyclerView = findViewById<RecyclerView>(R.id.completionsRecyclerView)
-        val editTaskButton = findViewById<ActionMenuItemView>(R.id.editButton)
         val topAppBar = findViewById<MaterialToolbar>(R.id.topAppBar)
 
         // Fill in data for modifying existing task
@@ -76,11 +74,20 @@ class ViewTaskActivity : AppCompatActivity() {
                     }.show(supportFragmentManager, "materialDatePicker")
                 }
 
-                // Edit task button
-                editTaskButton.setOnClickListener {
-                    val intent = Intent(editTaskButton.context, EditTaskActivity::class.java)
-                    intent.putExtra("taskId", incomingTask.definition.id)
-                    editTaskButton.context.startActivity(intent)
+                // Menu buttons
+                topAppBar.setOnMenuItemClickListener { menuItem ->
+                    when (menuItem.itemId) {
+                        R.id.editButton -> {
+                            // Handle edit text press
+                            val intent =
+                                Intent(baseContext, EditTaskActivity::class.java)
+                            intent.putExtra("taskId", incomingTask.definition.id)
+                            baseContext.startActivity(intent)
+                            true
+                        }
+
+                        else -> false
+                    }
                 }
             }
         }

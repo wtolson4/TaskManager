@@ -31,12 +31,12 @@ class NotificationManager {
         val dao = AppDatabase.getDatabase(context).taskDao()
         val repository = TaskRepository(dao)
 
-        // Check for any notifications that should have fired between last notif and now
+        // Check for any notifications that should have fired between last notification and now
         val expiredTasks = repository.getAllTasks()
             .filter { it.nextNotification(latestNotification) < LocalDateTime.now() }
         // TODO: fire notifications
         Timber.e(
-            "Would fire notifs for: %s",
+            "Would fire notifications for: %s",
             expiredTasks.joinToString(','.toString()) { it.definition.name }
         )
     }
@@ -50,10 +50,8 @@ class NotificationManager {
         val repository = TaskRepository(dao)
 
         // Find the next alarm time
-        val nextAlarmTime =
-            repository.getAllTasks().minBy { it.nextNotification(latestNotification) }
-                .nextNotification(latestNotification)
-        return nextAlarmTime
+        return repository.getAllTasks().minBy { it.nextNotification(latestNotification) }
+            .nextNotification(latestNotification)
     }
 
     private fun setAlarmInternal(context: Context, nextAlarmTime: LocalDateTime) {
@@ -103,12 +101,12 @@ class NotificationManager {
         private val storagePath = "last_notification.txt"
         private val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
         fun get(context: Context): LocalDateTime {
-            try {
+            return try {
                 val read = context.openFileInput(storagePath).bufferedReader().readText()
-                return LocalDateTime.parse(read, formatter)
+                LocalDateTime.parse(read, formatter)
             } catch (e: FileNotFoundException) {
                 Timber.d("No recorded last notification time")
-                return LocalDateTime.MIN
+                LocalDateTime.MIN
             }
         }
 

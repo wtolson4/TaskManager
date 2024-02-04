@@ -71,7 +71,7 @@ data class Task(
         get() = 0
 
     fun nextNotification(lastNotification: LocalDateTime): LocalDateTime {
-        val nextNotifDate = if (nextDueDate > lastNotification.toLocalDate()) {
+        val nextNotificationDate = if (nextDueDate > lastNotification.toLocalDate()) {
             // Due date is in the future, notify on due date
             nextDueDate
         } else {
@@ -82,7 +82,7 @@ data class Task(
 
         // TODO: notification time should be based on the task's notification rule
         val time = LocalTime.now().plusSeconds(30)
-        return nextNotifDate.atTime(time)
+        return nextNotificationDate.atTime(time)
     }
 
 }

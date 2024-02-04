@@ -9,9 +9,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.view.menu.ActionMenuItemView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -48,7 +48,7 @@ class EditTaskActivity : AppCompatActivity() {
         val frequencyEditText = findViewById<EditText>(R.id.frequencyEditText)
         val addTaskButton = findViewById<Button>(R.id.saveTaskButton)
         val cancelButton = findViewById<Button>(R.id.cancelButton)
-        val deleteButton = findViewById<ActionMenuItemView>(R.id.deleteButton)
+        val topAppBar = findViewById<MaterialToolbar>(R.id.topAppBar)
 
         // Task saving logic
         val saveTask = {
@@ -101,21 +101,30 @@ class EditTaskActivity : AppCompatActivity() {
                 nextDueEditText.text = it.nextDueDate.format(dateFormatter)
                 initialDueDate = it.definition.initialDueDate
 
-                // Delete task button
-                deleteButton.setOnClickListener {
-                    MaterialAlertDialogBuilder(this)
-                        .setTitle(R.string.delete_task_dialog_title)
-                        .setMessage(incomingTask.definition.name)
-                        .setNegativeButton(R.string.dialog_cancel) { dialog, which ->
-                            // Respond to negative button press
+                // Menu buttons
+                topAppBar.setOnMenuItemClickListener { menuItem ->
+                    when (menuItem.itemId) {
+                        R.id.editButton -> {
+                            // Delete task button
+                            MaterialAlertDialogBuilder(this)
+                                .setTitle(R.string.delete_task_dialog_title)
+                                .setMessage(incomingTask.definition.name)
+                                .setNegativeButton(R.string.dialog_cancel) { dialog, which ->
+                                    // Respond to negative button press
+                                }
+                                .setPositiveButton(R.string.dialog_delete) { dialog, which ->
+                                    viewModel.delete(incomingTask, baseContext)
+                                    Toast.makeText(this, "Task deleted", Toast.LENGTH_SHORT)
+                                        .show()
+                                    // TODO: use jetpack navigation, replace activities with fragments: https://developer.android.com/guide/navigation/migrate
+                                    navigateUpTo(Intent(baseContext, MainActivity::class.java))
+                                }
+                                .show()
+                            true
                         }
-                        .setPositiveButton(R.string.dialog_delete) { dialog, which ->
-                            viewModel.delete(incomingTask, baseContext)
-                            Toast.makeText(this, "Task deleted", Toast.LENGTH_SHORT).show()
-                            // TODO: use jetpack navigation, replace activities with fragments: https://developer.android.com/guide/navigation/migrate
-                            navigateUpTo(Intent(baseContext, MainActivity::class.java))
-                        }
-                        .show()
+
+                        else -> false
+                    }
                 }
             }
         }
