@@ -41,7 +41,7 @@ class PreferenceRowNotificationTime(context: Context, attrs: AttributeSet?) :
         val currentTime = Settings.NotificationTime.get(context)
 
         // Show the time picker
-        createTimePicker(currentTime) {
+        createTimePicker(context, currentTime) {
             Settings.NotificationTime.set(context, it)
             AppNotificationManager().updateNotificationsAndAlarms(context)
 

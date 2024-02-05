@@ -183,7 +183,7 @@ class EditTaskActivity : AppCompatActivity() {
             }
         }
         notificationTimeEditText.setOnClickListener {
-            createTimePicker(notificationTime) { localTime ->
+            createTimePicker(baseContext, notificationTime) { localTime ->
                 notificationTimeEditText.text = localTime.format(timeFormatter)
                 notificationTime = localTime
             }.show(supportFragmentManager, "materialDatePicker")
