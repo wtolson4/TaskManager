@@ -32,4 +32,6 @@
     <string name="notification_frequency_name">Notification frequency</string>
     <string name="notification_frequency_description">Scaling factor for notification frequency</string>
     <string name="next_notification_date">Next Notification Date</string>
+    <string name="notification_time">Notification Time</string>
+    <string name="override_global_notification_time">Override global notification time</string>
 </resources>

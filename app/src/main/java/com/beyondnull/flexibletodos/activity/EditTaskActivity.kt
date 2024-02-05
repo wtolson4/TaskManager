@@ -23,12 +23,16 @@ import com.beyondnull.flexibletodos.data.TaskRepository
 import com.beyondnull.flexibletodos.data.TaskViewModel
 import com.beyondnull.flexibletodos.data.TaskViewModelFactory
 import com.beyondnull.flexibletodos.picker.createDatePicker
+import com.beyondnull.flexibletodos.picker.createTimePicker
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.materialswitch.MaterialSwitch
 import timber.log.Timber
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import java.util.Objects.isNull
 
 
 class EditTaskActivity : AppCompatActivity() {
@@ -51,13 +55,18 @@ class EditTaskActivity : AppCompatActivity() {
         val existingTask = existingId?.let { viewModel.getLiveTaskById(it) }
 
         val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)
+        val timeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
 
         // Reference UI components
         val taskNameEditText = findViewById<EditText>(R.id.taskNameEditText)
         val descriptionEditText = findViewById<EditText>(R.id.descriptionEditText)
         val initialDueEditText = findViewById<TextView>(R.id.initialDueEditText)
         val nextDueEditText = findViewById<TextView>(R.id.nextDueEditText)
+        val overrideGlobalNotificationSwitch =
+            findViewById<MaterialSwitch>(R.id.overrideGlobalNotificationTimeSwitch)
+        val notificationTimeEditText = findViewById<TextView>(R.id.notificationTimeEditText)
         var initialDueDate: LocalDate? = null
+        var notificationTime: LocalTime? = null
         val frequencyEditText = findViewById<EditText>(R.id.frequencyEditText)
         val addTaskButton = findViewById<Button>(R.id.saveTaskButton)
         val cancelButton = findViewById<Button>(R.id.cancelButton)
@@ -73,14 +82,15 @@ class EditTaskActivity : AppCompatActivity() {
             if (taskName.isNotEmpty() && dueDate != null) {
                 val newTask = TaskDefinition(
                     id = existingId
-                        ?: 0, // Insert methods treat 0 as not-set while inserting the item. (i.e. use
+                        ?: 0, // Insert methods treat 0 as not-set while inserting the item.
                     name = taskName,
                     description,
                     creationDate = LocalDate.now(),
                     initialDueDate = dueDate,
                     frequency = frequency,
                     notificationLastDismissed = existingTask?.value?.definition?.notificationLastDismissed,
-                    notificationTime = existingTask?.value?.definition?.notificationTime,
+                    notificationTime = notificationTime,
+                    // TODO: (P2) add a way to edit per-task notification frequency in the UI
                     notificationFrequency = existingTask?.value?.definition?.notificationFrequency
                 )
                 if (existingId == null) {
@@ -116,11 +126,16 @@ class EditTaskActivity : AppCompatActivity() {
                 frequencyEditText.setText(it.definition.frequency.toString())
                 nextDueEditText.text = it.nextDueDate.format(dateFormatter)
                 initialDueDate = it.definition.initialDueDate
+                notificationTime = it.definition.notificationTime
+                overrideGlobalNotificationSwitch.isChecked = !isNull(notificationTime)
+                notificationTimeEditText.text =
+                    it.definition.notificationTime?.format(timeFormatter)
 
                 // Menu buttons
+                topAppBar.menu.findItem(R.id.deleteButton)?.setVisible(true)
                 topAppBar.setOnMenuItemClickListener { menuItem ->
                     when (menuItem.itemId) {
-                        R.id.editButton -> {
+                        R.id.deleteButton -> {
                             // Delete task button
                             MaterialAlertDialogBuilder(this)
                                 .setTitle(R.string.delete_task_dialog_title)
@@ -132,7 +147,7 @@ class EditTaskActivity : AppCompatActivity() {
                                     viewModel.delete(incomingTask, baseContext)
                                     Toast.makeText(this, "Task deleted", Toast.LENGTH_SHORT)
                                         .show()
-                                    // TODO: use jetpack navigation, replace activities with fragments: https://developer.android.com/guide/navigation/migrate
+                                    // TODO: (P2) use jetpack navigation, replace activities with fragments: https://developer.android.com/guide/navigation/migrate
                                     navigateUpTo(Intent(baseContext, MainActivity::class.java))
                                 }
                                 .show()
@@ -151,6 +166,26 @@ class EditTaskActivity : AppCompatActivity() {
             createDatePicker(initialDueDate) { localDate ->
                 initialDueEditText.text = localDate.format(dateFormatter)
                 initialDueDate = localDate
+            }.show(supportFragmentManager, "materialDatePicker")
+        }
+
+        // Handle time picker
+        overrideGlobalNotificationSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                val baseTime = notificationTime ?: LocalTime.now().withMinute(0)
+                notificationTimeEditText.text = baseTime.format(timeFormatter)
+                notificationTime = baseTime
+                (notificationTimeEditText.parent.parent as View).visibility = View.VISIBLE
+
+            } else {
+                notificationTime = null
+                (notificationTimeEditText.parent.parent as View).visibility = View.GONE
+            }
+        }
+        notificationTimeEditText.setOnClickListener {
+            createTimePicker(notificationTime) { localTime ->
+                notificationTimeEditText.text = localTime.format(timeFormatter)
+                notificationTime = localTime
             }.show(supportFragmentManager, "materialDatePicker")
         }
 
@@ -199,7 +234,7 @@ class EditTaskActivity : AppCompatActivity() {
         } else {
             if (shouldShowRequestPermissionRationale(permission)
             ) {
-                // TODO: show rationale first before launchin launcher to request permission
+                // TODO: (P3) show rationale first before launchin launcher to request permission
             } else {
                 // first request or forever denied case
                 requestPermissionLauncher.launch(permission)

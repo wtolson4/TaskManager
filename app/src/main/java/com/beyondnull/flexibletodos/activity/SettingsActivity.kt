@@ -27,4 +27,6 @@ class SettingsActivity : AppCompatActivity() {
             finish()
         }
     }
+    // TODO: (P2) Regularly db import
+    // TODO: (P2) Add a settings link to the notification settings
 }

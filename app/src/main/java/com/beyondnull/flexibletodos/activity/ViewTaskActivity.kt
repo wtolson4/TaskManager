@@ -49,6 +49,8 @@ class ViewTaskActivity : AppCompatActivity() {
         val existingTask = existingId?.let { viewModel.getLiveTaskById(it) }
 
         val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)
+        val dateTimeFormatter =
+            DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL, FormatStyle.SHORT)
 
         // Reference UI components
         val taskNameEditText = findViewById<EditText>(R.id.taskNameEditText)
@@ -70,7 +72,7 @@ class ViewTaskActivity : AppCompatActivity() {
                 frequencyEditText.setText(it.definition.frequency.toString())
                 nextDueEditText.text = it.nextDueDate.format(dateFormatter)
                 nextNotificationEditText.text =
-                    it.nextNotification(baseContext).format(dateFormatter)
+                    it.nextNotification(baseContext).format(dateTimeFormatter)
 
                 // Set up the completions RecyclerView
                 completionsRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -126,8 +128,8 @@ class CompletionsAdapter(private val viewModel: TaskViewModel) :
             val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)
             recurrenceDateTextView.text = currentCompletion.date.format(dateFormatter)
 
-            // TODO: add "timeliness" of this completion
-            // TODO: also consider logging the recurrence at the time of this completion
+            // TODO: (P1) add "timeliness" of this completion
+            // TODO: (P3) also consider logging the recurrence at the time of this completion
             recurrenceTimelinessTextView.text = currentCompletion.id.toString()
 
             itemView.setOnClickListener {

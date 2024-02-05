@@ -31,18 +31,21 @@ class AppNotificationManager {
     private val notificationChannelId = "task_notifications"
 
     // It's safe to call this repeatedly, because creating an existing notification channel performs no operation.
-    private fun createNotificationChannel(context: Context) {
+    private fun createNotificationChannel(context: Context): String {
         // Create the NotificationChannel.
         val name = getString(context, R.string.notification_channel_name)
         val descriptionText = getString(context, R.string.notification_channel_description)
-        val importance = NotificationManager.IMPORTANCE_LOW
+        val importance =
+            NotificationManager.IMPORTANCE_DEFAULT // IMPORTANCE_DEFAULT == "high", with sound and shows in the status bar
         val mChannel = NotificationChannel(notificationChannelId, name, importance)
+        mChannel.setSound(null, null) // Set the notification to silent
         mChannel.description = descriptionText
         // Register the channel with the system. You can't change the importance
         // or other notification behaviors after this.
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(mChannel)
+        return mChannel.id
     }
 
     private fun createNotification(context: Context, task: Task) {
@@ -284,6 +287,6 @@ class AppNotificationManager {
         const val notificationActionCancelled = BuildConfig.APPLICATION_ID + ".swipedAway"
         const val notificationExtraTaskIdKey = "taskId"
         const val notificationIdForGroup =
-            Int.MAX_VALUE - 20 // Use an impossibly high ID for this summary notification
+            Int.MAX_VALUE - 20 // Use an ID that won't conflict with any task IDs
     }
 }

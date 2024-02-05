@@ -72,6 +72,7 @@ class MainActivity : AppCompatActivity() {
         ViewCompat.setOnApplyWindowInsetsListener(addTaskButton) { view, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             view.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                // TODO: (P1) something about this is broken on API 26
                 this.bottomMargin = insets.bottom + 32
                 this.rightMargin = insets.right + 32
             }
@@ -82,6 +83,7 @@ class MainActivity : AppCompatActivity() {
 
         // Observe changes in the data and update the RecyclerView
         viewModel.allTasks.observe(this) { tasks ->
+            // TODO: (P2) Helper text "click + to add your first task" when list is empty
             taskAdapter.submitList(tasks)
         }
 

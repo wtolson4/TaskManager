@@ -46,7 +46,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:hint="@string/task_name_placeholder"
-                    android:inputType="text" />
+                    android:inputType="textCapSentences|textAutoCorrect" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -81,7 +81,8 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:visibility="gone">
+            android:visibility="gone"
+            tools:visibility="visible">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/nextDueEditText"
@@ -103,8 +104,30 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/description_placeholder"
-                android:inputType="textMultiLine" />
+                android:inputType="textMultiLine|textCapSentences|textAutoCorrect" />
         </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/overrideGlobalNotificationTimeSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="@string/override_global_notification_time" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/notificationTimeEditText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:focusable="false"
+                android:hint="@string/notification_time"
+                android:inputType="date" />
+        </com.google.android.material.textfield.TextInputLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"

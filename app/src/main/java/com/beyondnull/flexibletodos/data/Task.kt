@@ -92,10 +92,12 @@ data class Task(
     }
 
     // TODO: impl urgency
+    // TODO: (P2) Color due text (notification + main view) based on urgency
     val urgency: Int
         get() = 0
 
     fun nextNotification(context: Context): LocalDateTime {
+        // TODO: (P1) Change last-dismissed to be a local datetime, so dismissals after midnight don't prevent next day notices
         val nextNotificationDate =
             if (isNull(definition.notificationLastDismissed) || nextDueDate > definition.notificationLastDismissed) {
                 // Due date is in the future, notify on due date
@@ -119,7 +121,6 @@ data class Task(
     }
 
     fun scaleGlobalFrequency(taskFrequency: Int, globalFrequency: Int): Int {
-        // TODO: if using the global frequency, this should be scaled to the task due frequency
         return (globalFrequency / (taskFrequency * 7)).coerceAtLeast(1)
     }
 }
