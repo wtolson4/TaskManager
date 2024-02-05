@@ -6,9 +6,9 @@
     <item
         android:id="@+id/deleteButton"
         android:icon="@drawable/baseline_delete_24"
-        app:iconTint="?attr/colorOnSurfaceVariant"
         android:title="@string/delete"
         android:visible="false"
+        app:iconTint="?attr/colorOnSurfaceVariant"
         app:showAsAction="ifRoom" />
 
 </menu>

@@ -16,11 +16,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="?attr/actionBarSize"
-            app:title="@string/app_title"
             app:menu="@menu/top_app_bar_main"
-            app:titleCentered="true"
             app:navigationIcon="@drawable/baseline_menu_24"
-            app:navigationIconTint="?attr/colorOnSurface" />
+            app:navigationIconTint="?attr/colorOnSurface"
+            app:title="@string/app_title"
+            app:titleCentered="true" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

@@ -32,9 +32,9 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:orientation="horizontal"
-            android:baselineAligned="false">
+            android:layout_height="@dimen/row_height"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="0dp"
@@ -66,7 +66,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp">
+            android:layout_height="@dimen/row_height">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/initialDueEditText"
@@ -80,7 +80,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="@dimen/row_height"
             android:visibility="gone"
             tools:visibility="visible">
 
@@ -97,7 +97,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp">
+            android:layout_height="@dimen/row_height">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/descriptionEditText"
@@ -110,12 +110,12 @@
         <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/overrideGlobalNotificationTimeSwitch"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="@dimen/row_height"
             android:text="@string/override_global_notification_time" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="@dimen/row_height"
             android:visibility="gone"
             tools:visibility="visible">
 
@@ -131,7 +131,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="@dimen/row_height"
             android:orientation="horizontal">
 
             <Button
@@ -144,6 +144,7 @@
 
             <Button
                 android:id="@+id/saveTaskButton"
+                style="@style/Widget.Material3.Button"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginTop="0dp"

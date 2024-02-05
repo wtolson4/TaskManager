@@ -3,11 +3,11 @@
     android:id="@+id/timePickerPreferenceRow"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:hapticFeedbackEnabled="false"
     android:orientation="vertical"
     android:paddingHorizontal="@dimen/settings_row_padding"
-    android:paddingVertical="@dimen/settings_row_padding"
-    android:hapticFeedbackEnabled="false"
-    android:background="?attr/selectableItemBackground">
+    android:paddingVertical="@dimen/settings_row_padding">
 
     <TextView
         android:id="@+id/timePickerTitle"

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <com.beyondnull.flexibletodos.picker.PreferenceRowNotificationTime
         android:layout="@layout/preference_row_time_picker"
         android:selectable="true" />
 
-        <com.beyondnull.flexibletodos.picker.PreferenceRowNotificationFrequency
+    <com.beyondnull.flexibletodos.picker.PreferenceRowNotificationFrequency
         android:layout="@layout/preference_row_frequency_picker"
         android:selectable="true" />
 </PreferenceScreen>
