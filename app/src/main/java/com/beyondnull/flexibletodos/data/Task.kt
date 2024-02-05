@@ -6,6 +6,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 import com.beyondnull.flexibletodos.R
+import com.beyondnull.flexibletodos.calculation.GlobalFrequencyScaling
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -112,7 +113,7 @@ data class Task(
                 // Due date is before the last dismissal.
                 // Based on notification frequency, determine the closest scheduled notification times to today
                 val notificationFrequency =
-                    definition.notificationFrequency ?: scaleGlobalFrequency(
+                    definition.notificationFrequency ?: GlobalFrequencyScaling.scale(
                         definition.frequency,
                         Settings.NotificationFrequency.get(context)
                     )
@@ -128,9 +129,5 @@ data class Task(
             }
 
         return nextNotificationDateTime
-    }
-
-    fun scaleGlobalFrequency(taskFrequency: Int, globalFrequency: Int): Int {
-        return (globalFrequency / (taskFrequency * 7)).coerceAtLeast(1)
     }
 }

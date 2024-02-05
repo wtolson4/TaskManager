@@ -35,16 +35,18 @@ class Settings {
 
         companion object {
             private const val key = "global_notification_frequency"
-            private const val default = 7
+            private const val default = 3
+            const val min = 1
+            const val max = 5
             fun get(context: Context): Int {
                 val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-                return preferences.getInt(key, default)
+                return preferences.getInt(key, default).coerceAtLeast(min).coerceAtMost(max)
             }
 
             fun set(context: Context, frequency: Int) {
                 val preferences = PreferenceManager.getDefaultSharedPreferences(context)
                 with(preferences.edit()) {
-                    putInt(key, frequency)
+                    putInt(key, frequency.coerceAtLeast(min).coerceAtMost(max))
                     apply()
                 }
             }
