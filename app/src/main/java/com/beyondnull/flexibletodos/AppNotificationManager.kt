@@ -229,7 +229,7 @@ class AppNotificationManager {
                                         null -> Timber.e("Task not found: %d", taskId)
                                         else -> {
                                             val newTaskDef =
-                                                task.definition.copy(notificationLastDismissed = LocalDate.now())
+                                                task.definition.copy(notificationLastDismissed = LocalDateTime.now())
                                             repository.updateTask(newTaskDef)
                                             AppNotificationManager().updateNotificationsAndAlarms(
                                                 context

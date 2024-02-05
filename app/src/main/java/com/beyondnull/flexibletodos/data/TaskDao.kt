@@ -10,6 +10,7 @@ import androidx.room.Transaction
 import androidx.room.TypeConverter
 import androidx.room.Update
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
@@ -61,23 +62,33 @@ interface TaskDao {
 
 class Converters {
     @TypeConverter
-    fun fromTimestamp(value: String): LocalDate {
+    fun stringToDate(value: String): LocalDate {
         return LocalDate.parse(value, DateTimeFormatter.ISO_LOCAL_DATE)
     }
 
     @TypeConverter
-    fun dateToTimestamp(date: LocalDate): String {
+    fun dateToString(date: LocalDate): String {
         return date.format(DateTimeFormatter.ISO_LOCAL_DATE)
     }
 
     @TypeConverter
-    fun fromTimeString(value: String): LocalTime {
+    fun stringToTime(value: String): LocalTime {
         return LocalTime.parse(value, DateTimeFormatter.ISO_LOCAL_TIME)
     }
 
     @TypeConverter
     fun timeToString(time: LocalTime): String {
         return time.format(DateTimeFormatter.ISO_LOCAL_TIME)
+    }
+
+    @TypeConverter
+    fun stringToDateTime(value: String): LocalDateTime {
+        return LocalDateTime.parse(value, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+    }
+
+    @TypeConverter
+    fun dateTimeToString(time: LocalDateTime): String {
+        return time.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
     }
 }
 

@@ -32,7 +32,7 @@ data class TaskDefinition(
     val creationDate: LocalDate,
     val initialDueDate: LocalDate,
     val frequency: Int,
-    val notificationLastDismissed: LocalDate?,
+    val notificationLastDismissed: LocalDateTime?,
     val notificationTime: LocalTime?,
     val notificationFrequency: Int?,
 )
@@ -97,27 +97,37 @@ data class Task(
         get() = 0
 
     fun nextNotification(context: Context): LocalDateTime {
-        // TODO: (P1) Change last-dismissed to be a local datetime, so dismissals after midnight don't prevent next day notices
-        val nextNotificationDate =
-            if (isNull(definition.notificationLastDismissed) || nextDueDate > definition.notificationLastDismissed) {
-                // Due date is in the future, notify on due date
-                nextDueDate
+        val notificationTime =
+            this.definition.notificationTime ?: Settings.NotificationTime.get(context)
+        val nextDueDateTime = nextDueDate.atTime(notificationTime)
+
+        val nextNotificationDateTime =
+            if (isNull(definition.notificationLastDismissed)) {
+                // Notification has never been dismissed, show at next due date
+                nextDueDateTime
+            } else if (nextDueDateTime > definition.notificationLastDismissed) {
+                // Due date is after the last dismissal, notify on due date
+                nextDueDateTime
             } else {
-                // Due date is in the past
-                val daysSinceDue = Period.between(nextDueDate, LocalDate.now()).days
+                // Due date is before the last dismissal.
+                // Based on notification frequency, determine the closest scheduled notification times to today
                 val notificationFrequency =
                     definition.notificationFrequency ?: scaleGlobalFrequency(
                         definition.frequency,
                         Settings.NotificationFrequency.get(context)
                     )
+                val daysSinceDue = Period.between(nextDueDate, LocalDate.now()).days
                 val remainder = daysSinceDue % notificationFrequency
-                val lastNotification = LocalDate.now().minusDays(remainder.toLong())
-                if (lastNotification > definition.notificationLastDismissed) lastNotification
-                else lastNotification.plusDays(notificationFrequency.toLong())
+                val lastScheduledNotification =
+                    LocalDate.now().minusDays(remainder.toLong()).atTime(notificationTime)
+                val nextScheduledNotification =
+                    lastScheduledNotification.plusDays(notificationFrequency.toLong())
+                // Compare the scheduled notifications to the last smissal
+                if (lastScheduledNotification > definition.notificationLastDismissed) lastScheduledNotification
+                else nextScheduledNotification
             }
 
-        val time = this.definition.notificationTime ?: Settings.NotificationTime.get(context)
-        return nextNotificationDate.atTime(time)
+        return nextNotificationDateTime
     }
 
     fun scaleGlobalFrequency(taskFrequency: Int, globalFrequency: Int): Int {
