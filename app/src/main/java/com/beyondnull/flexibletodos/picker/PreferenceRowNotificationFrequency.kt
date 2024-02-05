@@ -16,7 +16,7 @@ class PreferenceRowNotificationFrequency(context: Context, attrs: AttributeSet?)
     private lateinit var view: TextView
 
     private fun formatDescriptionString(currentFrequency: Int): String {
-        val examples = intArrayOf(1, 2, 3, 5, 7, 14, 30, 60, 90, 180, 365).joinToString("\n") {
+        val examples = intArrayOf(1, 2, 3, 5, 7, 14, 30, 60, 90, 180, 365, 730).joinToString("\n") {
             "Task due every $it days: Notification every ${
                 GlobalFrequencyScaling.scale(
                     it,
