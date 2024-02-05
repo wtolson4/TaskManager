@@ -38,7 +38,6 @@ class AppNotificationManager {
         val importance =
             NotificationManager.IMPORTANCE_DEFAULT // IMPORTANCE_DEFAULT == "high", with sound and shows in the status bar
         val mChannel = NotificationChannel(notificationChannelId, name, importance)
-        mChannel.setSound(null, null) // Set the notification to silent
         mChannel.description = descriptionText
         // Register the channel with the system. You can't change the importance
         // or other notification behaviors after this.
@@ -53,12 +52,12 @@ class AppNotificationManager {
         createNotificationChannel(context)
 
         // Create an explicit intent for the target click activity.
-        val clickIntent = Intent(context, MainActivity::class.java).apply {
+        val genericClickIntent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        // Use a different request code, otherwise this intent will get merged with others: https://stackoverflow.com/a/20205696
-        val clickPendingIntent: PendingIntent =
-            PendingIntent.getActivity(context, task.definition.id, clickIntent, FLAG_IMMUTABLE)
+        // This one is generic, so we can re-use the same request code
+        val genericClickPendingIntent: PendingIntent =
+            PendingIntent.getActivity(context, 0, genericClickIntent, FLAG_IMMUTABLE)
 
         // Create an intent for "mark as done"
         val markAsDoneIntent = Intent(context, AppBroadcastReceiver::class.java).apply {
@@ -91,7 +90,7 @@ class AppNotificationManager {
             .setContentText(task.getDueDaysString(context))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             // Set the intent that fires when the user taps the notification.
-            .setContentIntent(clickPendingIntent)
+            .setContentIntent(genericClickPendingIntent)
             // Automatically removes the notification when the user taps it.
             .setAutoCancel(false)
             // Add an action to mark as done
@@ -109,6 +108,10 @@ class AppNotificationManager {
         val summaryNotification = NotificationCompat.Builder(context, notificationChannelId)
             .setContentTitle("Tasks are due")
             .setSmallIcon(R.drawable.baseline_task_alt_24)
+            // Set the intent that fires when the user taps the notification.
+            .setContentIntent(genericClickPendingIntent)
+            // Automatically removes the notification when the user taps it.
+            .setAutoCancel(false)
             // Build summary info into InboxStyle template.
             .setStyle(
                 NotificationCompat.InboxStyle()
