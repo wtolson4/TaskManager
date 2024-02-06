@@ -15,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.beyondnull.flexibletodos.MainApplication
 import com.beyondnull.flexibletodos.R
 import com.beyondnull.flexibletodos.data.AppDatabase
 import com.beyondnull.flexibletodos.data.Task
@@ -45,14 +46,14 @@ class EditTaskActivity : AppCompatActivity() {
 
         // Global app data
         val dao = AppDatabase.getDatabase(this).taskDao()
-        val repository = TaskRepository(dao)
+        val repository = TaskRepository(dao, MainApplication.applicationScope)
         val factory = TaskViewModelFactory(repository)
         viewModel = ViewModelProvider(this, factory)[TaskViewModel::class.java]
 
         // Get data passed into this activity
         val bundle = intent.extras
         val existingId = bundle?.getInt("taskId")
-        val existingTask = existingId?.let { viewModel.getLiveTaskById(it) }
+        val existingTask = existingId?.let { viewModel.getTaskById(it) }
 
         val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)
         val timeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)

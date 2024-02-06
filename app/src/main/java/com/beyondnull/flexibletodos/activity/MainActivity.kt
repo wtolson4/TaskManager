@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.beyondnull.flexibletodos.MainApplication
 import com.beyondnull.flexibletodos.R
 import com.beyondnull.flexibletodos.data.AppDatabase
 import com.beyondnull.flexibletodos.data.Task
@@ -40,7 +41,7 @@ class MainActivity : AppCompatActivity() {
 
         // Initialize database and repository
         val dao = AppDatabase.getDatabase(this).taskDao()
-        val repository = TaskRepository(dao)
+        val repository = TaskRepository(dao, MainApplication.applicationScope)
         val factory = TaskViewModelFactory(repository)
 
         // Initialize ViewModel using the factory

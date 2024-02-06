@@ -7,7 +7,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
-import com.beyondnull.flexibletodos.AppNotificationManager
 import com.beyondnull.flexibletodos.R
 import com.beyondnull.flexibletodos.data.Settings
 import java.time.format.DateTimeFormatter
@@ -43,7 +42,6 @@ class PreferenceRowNotificationTime(context: Context, attrs: AttributeSet?) :
         // Show the time picker
         createTimePicker(context, currentTime) {
             Settings.NotificationTime.set(context, it)
-            AppNotificationManager().updateNotificationsAndAlarms(context)
 
             view.text =
                 String.format(

@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.beyondnull.flexibletodos.MainApplication
 import com.beyondnull.flexibletodos.R
 import com.beyondnull.flexibletodos.data.AppDatabase
 import com.beyondnull.flexibletodos.data.CompletionDate
@@ -39,14 +40,14 @@ class ViewTaskActivity : AppCompatActivity() {
 
         // Global app data
         val dao = AppDatabase.getDatabase(this).taskDao()
-        val repository = TaskRepository(dao)
+        val repository = TaskRepository(dao, MainApplication.applicationScope)
         val factory = TaskViewModelFactory(repository)
         viewModel = ViewModelProvider(this, factory)[TaskViewModel::class.java]
 
         // Get data passed into this activity
         val bundle = intent.extras
         val existingId = bundle?.getInt("taskId")
-        val existingTask = existingId?.let { viewModel.getLiveTaskById(it) }
+        val existingTask = existingId?.let { viewModel.getTaskById(it) }
 
         val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)
         val dateTimeFormatter =

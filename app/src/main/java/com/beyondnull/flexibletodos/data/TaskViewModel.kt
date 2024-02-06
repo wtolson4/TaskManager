@@ -4,13 +4,11 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.DiffUtil
-import com.beyondnull.flexibletodos.AppNotificationManager
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.time.LocalDate
 
 /**
@@ -22,7 +20,7 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
     // - We can put an observer on the data (instead of polling for changes) and only update the
     //   the UI when the data actually changes.
     // - Repository is completely separated from the UI through the ViewModel.
-    private val _allTasks: LiveData<List<Task>> = repository.allTasksLive
+    private val _allTasks: LiveData<List<Task>> = repository.allTasks.asLiveData()
     private fun sortCompletionsByDate(t: Task): Task {
         val newCompletions = t.completions.sortedBy { it.date }
         return t.copy(completions = newCompletions)
@@ -34,51 +32,37 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
             withSortedCompletions.sortedBy { it.daysUntilDue }
         }
 
-    fun getLiveTaskById(taskId: Int): LiveData<Task?> {
-        return repository.getLiveTaskById(taskId).map { it?.let { sortCompletionsByDate(it) } }
+    fun getTaskById(taskId: Int): LiveData<Task?> {
+        return repository.getTaskById(taskId).asLiveData()
+            .map { it?.let { sortCompletionsByDate(it) } }
     }
 
     /**
      * Launching a new coroutine to insert the data in a non-blocking way
      */
     fun insertTask(task: TaskDefinition, context: Context) = viewModelScope.launch {
-        withContext(Dispatchers.IO) {
-            repository.insertTask(task)
-            AppNotificationManager().updateNotificationsAndAlarms(context)
-        }
+        repository.insertTask(task)
     }
 
     fun update(task: TaskDefinition, context: Context) = viewModelScope.launch {
-        withContext(Dispatchers.IO) {
-            repository.updateTask(task)
-            AppNotificationManager().updateNotificationsAndAlarms(context)
-        }
+        repository.updateTask(task)
     }
 
     fun delete(task: Task, context: Context) = viewModelScope.launch {
-        withContext(Dispatchers.IO) {
-            repository.deleteTask(task)
-            AppNotificationManager().updateNotificationsAndAlarms(context)
-        }
+        repository.deleteTask(task)
     }
 
     fun insertCompletion(task: Task, date: LocalDate, context: Context) =
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                repository.insertCompletion(
-                    taskId = task.definition.id,
-                    completionDate = date,
-                    frequencyWhenCompleted = task.definition.frequency
-                )
-                AppNotificationManager().updateNotificationsAndAlarms(context)
-            }
+            repository.insertCompletion(
+                taskId = task.definition.id,
+                completionDate = date,
+                frequencyWhenCompleted = task.definition.frequency
+            )
         }
 
     fun deleteCompletion(completion: CompletionDate, context: Context) = viewModelScope.launch {
-        withContext(Dispatchers.IO) {
-            repository.deleteCompletion(completion)
-            AppNotificationManager().updateNotificationsAndAlarms(context)
-        }
+        repository.deleteCompletion(completion)
     }
 }
 

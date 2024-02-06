@@ -1,6 +1,5 @@
 package com.beyondnull.flexibletodos.data
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -9,6 +8,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.TypeConverter
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -30,34 +30,26 @@ interface TaskDao {
     // https://developer.android.com/training/data-storage/room/relationships#one-to-many
     @Transaction
     @Query("SELECT * FROM TaskDefinition")
-    fun getTasksLive(): LiveData<List<Task>>
-
-    @Transaction
-    @Query("SELECT * FROM TaskDefinition")
-    fun getTasks(): List<Task>
+    fun getTasks(): Flow<List<Task>>
 
     @Transaction
     @Query("SELECT * FROM TaskDefinition WHERE id = :taskId")
-    fun getLiveTaskById(taskId: Int): LiveData<Task?>
-
-    @Transaction
-    @Query("SELECT * FROM TaskDefinition WHERE id = :taskId")
-    fun getTaskById(taskId: Long): Task?
+    fun getTaskById(taskId: Long): Flow<Task?>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertTask(task: TaskDefinition): Long
+    suspend fun insertTask(task: TaskDefinition): Long
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertCompletion(completion: CompletionDate): Long
+    suspend fun insertCompletion(completion: CompletionDate): Long
 
     @Update
-    fun updateTask(task: TaskDefinition)
+    suspend fun updateTask(task: TaskDefinition)
 
     @Delete
-    fun deleteTask(task: TaskDefinition)
+    suspend fun deleteTask(task: TaskDefinition)
 
     @Delete
-    fun deleteCompletion(completion: CompletionDate)
+    suspend fun deleteCompletion(completion: CompletionDate)
 }
 
 class Converters {
