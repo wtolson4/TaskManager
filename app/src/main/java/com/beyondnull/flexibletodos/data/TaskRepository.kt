@@ -4,6 +4,7 @@ import android.content.Context
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -81,6 +82,6 @@ class TaskRepository(private val taskDao: TaskDao, private val externalScope: Co
                 tasks.filter { it.nextNotification(context) > LocalDateTime.now() }
                     .minByOrNull { it.nextNotification(context) }
                     ?.nextNotification(context)
-            }
+            }.distinctUntilChanged()
     }
 }

@@ -35,7 +35,7 @@
         </activity>
 
         <receiver
-            android:name="com.beyondnull.flexibletodos.manager.NotificationManager$AppBroadcastReceiver"
+            android:name="com.beyondnull.flexibletodos.manager.BroadcastReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>

@@ -29,7 +29,7 @@ class AlarmManager(
                     val alarmManager =
                         appContext.getSystemService(Context.ALARM_SERVICE) as android.app.AlarmManager
                     val intent =
-                        Intent(appContext, NotificationManager.AppBroadcastReceiver::class.java)
+                        Intent(appContext, BroadcastReceiver::class.java)
                     val pendingIntent =
                         PendingIntent.getBroadcast(appContext, 0, intent, FLAG_IMMUTABLE)
                     alarmManager.set(

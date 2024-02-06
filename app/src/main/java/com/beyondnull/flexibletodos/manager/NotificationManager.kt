@@ -3,7 +3,6 @@ package com.beyondnull.flexibletodos.manager
 import android.app.NotificationChannel
 import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_IMMUTABLE
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -12,96 +11,17 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat.getString
 import com.beyondnull.flexibletodos.BuildConfig
-import com.beyondnull.flexibletodos.MainApplication
 import com.beyondnull.flexibletodos.R
 import com.beyondnull.flexibletodos.activity.MainActivity
 import com.beyondnull.flexibletodos.data.AppDatabase
 import com.beyondnull.flexibletodos.data.Task
 import com.beyondnull.flexibletodos.data.TaskRepository
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.time.LocalDate
 import java.time.LocalDateTime
-import kotlin.coroutines.EmptyCoroutineContext
 
 class NotificationManager {
-    class AppBroadcastReceiver : BroadcastReceiver() {
-        @OptIn(DelicateCoroutinesApi::class)
-        override fun onReceive(
-            context: Context, intent: Intent
-        ) {
-            when {
-                intent.action == "android.intent.action.BOOT_COMPLETED" -> {
-                    // Must reset alarms when device reboots
-                    // https://developer.android.com/develop/background-work/services/alarms/schedule#boot
-                    Timber.d("Received boot notification")
-                }
-
-                intent.action == "android.intent.action.TIMEZONE_CHANGED" -> {
-                    Timber.d("Received timezone change notification")
-                }
-
-                intent.action == notificationActionCancelled || intent.action == notificationActionMarkAsDone -> {
-                    val taskId = intent.extras?.getInt(notificationExtraTaskIdKey)
-                    if (taskId == null) {
-                        Timber.e("Received %s without ID!", intent.action)
-                    } else {
-                        Timber.d("Received %s for %d", intent.action, taskId)
-
-                        // Let ourselves run async operations (coroutines)
-                        // https://stackoverflow.com/a/74112211
-                        // https://developer.android.com/reference/android/content/BroadcastReceiver#goAsync()
-                        val pendingResult = goAsync()
-                        GlobalScope.launch(EmptyCoroutineContext) {
-                            try {
-                                // Initialize DB
-                                val dao = AppDatabase.getDatabase(context).taskDao()
-                                val repository =
-                                    TaskRepository(dao, MainApplication.applicationScope)
-                                // Find task
-                                val task = repository.getTaskById(taskId).first()
-                                if (task == null) {
-                                    Timber.e("Task %d not found for %s", taskId, intent.action)
-                                } else {
-                                    when (intent.action) {
-                                        notificationActionCancelled -> {
-                                            val newTaskDef =
-                                                task.definition.copy(
-                                                    notificationLastDismissed = LocalDateTime.now()
-                                                )
-                                            repository.updateTask(newTaskDef)
-                                        }
-
-                                        notificationActionMarkAsDone -> {
-                                            repository.insertCompletion(
-                                                taskId = task.definition.id,
-                                                completionDate = LocalDate.now(),
-                                                frequencyWhenCompleted = task.definition.frequency
-                                            )
-                                        }
-                                    }
-                                }
-                            } finally {
-                                pendingResult.finish()
-                            }
-                        }
-                    }
-                }
-
-                intent.action == null && intent.component?.className == AppBroadcastReceiver::class.java.name.toString() -> {
-                    Timber.d("Received alarm")
-                }
-
-                else -> Timber.w("Unknown intent %s %s", intent.action, intent.component)
-            }
-
-        }
-    }
-
     companion object {
         const val notificationActionMarkAsDone = BuildConfig.APPLICATION_ID + ".markAsDone"
         const val notificationActionCancelled = BuildConfig.APPLICATION_ID + ".swipedAway"
@@ -142,7 +62,7 @@ class NotificationManager {
                 PendingIntent.getActivity(context, 0, genericClickIntent, FLAG_IMMUTABLE)
 
             // Create an intent for "mark as done"
-            val markAsDoneIntent = Intent(context, AppBroadcastReceiver::class.java).apply {
+            val markAsDoneIntent = Intent(context, BroadcastReceiver::class.java).apply {
                 action = notificationActionMarkAsDone
                 putExtra(notificationExtraTaskIdKey, task.definition.id)
             }
@@ -155,7 +75,7 @@ class NotificationManager {
                 )
 
             // Create an intent for dismissing the notification
-            val cancelIntent = Intent(context, AppBroadcastReceiver::class.java).apply {
+            val cancelIntent = Intent(context, BroadcastReceiver::class.java).apply {
                 action = notificationActionCancelled
                 putExtra(notificationExtraTaskIdKey, task.definition.id)
             }
@@ -257,7 +177,7 @@ class NotificationManager {
             val dao = AppDatabase.getDatabase(context).taskDao()
             val repository = TaskRepository(dao, externalScope)
             externalScope.launch {
-                Timber.d("Starting to watch for task changes to trigger notifications")
+                Timber.d("Starting to watch for task changes to trigger alarms")
                 repository.allTasks.collect { tasks ->
                     updateNotifications(
                         context,
