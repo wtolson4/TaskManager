@@ -1,8 +1,6 @@
-package com.beyondnull.flexibletodos
+package com.beyondnull.flexibletodos.manager
 
-import android.app.AlarmManager
 import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.content.BroadcastReceiver
@@ -13,6 +11,9 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat.getString
+import com.beyondnull.flexibletodos.BuildConfig
+import com.beyondnull.flexibletodos.MainApplication
+import com.beyondnull.flexibletodos.R
 import com.beyondnull.flexibletodos.activity.MainActivity
 import com.beyondnull.flexibletodos.data.AppDatabase
 import com.beyondnull.flexibletodos.data.Task
@@ -25,10 +26,9 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.ZoneId
 import kotlin.coroutines.EmptyCoroutineContext
 
-class AppNotificationManager {
+class NotificationManager {
     class AppBroadcastReceiver : BroadcastReceiver() {
         @OptIn(DelicateCoroutinesApi::class)
         override fun onReceive(
@@ -118,13 +118,13 @@ class AppNotificationManager {
             val name = getString(context, R.string.notification_channel_name)
             val descriptionText = getString(context, R.string.notification_channel_description)
             val importance =
-                NotificationManager.IMPORTANCE_DEFAULT // IMPORTANCE_DEFAULT == "high", with sound and shows in the status bar
+                android.app.NotificationManager.IMPORTANCE_DEFAULT // IMPORTANCE_DEFAULT == "high", with sound and shows in the status bar
             val mChannel = NotificationChannel(notificationChannelId, name, importance)
             mChannel.description = descriptionText
             // Register the channel with the system. You can't change the importance
             // or other notification behaviors after this.
             val notificationManager =
-                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
             notificationManager.createNotificationChannel(mChannel)
             return mChannel.id
         }
@@ -228,7 +228,7 @@ class AppNotificationManager {
 
         }
 
-        private fun updateNotificationsAndAlarms(context: Context, tasks: List<Task>) {
+        private fun updateNotifications(context: Context, tasks: List<Task>) {
             // Check for any notifications that should be firing
             var anyNotifsPresent = false
             for (task in tasks) {
@@ -248,50 +248,23 @@ class AppNotificationManager {
                     cancel(notificationIdForGroup)
                 }
             }
-
-            when (val it = calculateNextNotificationTime(context, tasks)) {
-                null -> Timber.i("No future alarms expected")
-                else -> setAlarmInternal(context, it)
-            }
         }
 
-        fun watchTasksAndUpdateNotificationsAndAlarms(
+        fun watchTasksAndUpdateNotifications(
             context: Context,
             externalScope: CoroutineScope
         ) {
             val dao = AppDatabase.getDatabase(context).taskDao()
             val repository = TaskRepository(dao, externalScope)
             externalScope.launch {
-                Timber.d("Starting to watch for task changes to trigger notifications and alarms")
+                Timber.d("Starting to watch for task changes to trigger notifications")
                 repository.allTasks.collect { tasks ->
-                    updateNotificationsAndAlarms(
+                    updateNotifications(
                         context,
                         tasks
                     )
                 }
             }
-        }
-
-        private fun calculateNextNotificationTime(
-            context: Context,
-            tasks: List<Task>
-        ): LocalDateTime? {
-            // Find the next alarm time
-            return tasks
-                // Only future alarms
-                .filter { it.nextNotification(context) > LocalDateTime.now() }
-                .minByOrNull { it.nextNotification(context) }
-                ?.nextNotification(context)
-        }
-
-        private fun setAlarmInternal(context: Context, nextAlarmTime: LocalDateTime) {
-            val timeInMillis =
-                nextAlarmTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            val intent = Intent(context, AppBroadcastReceiver::class.java)
-            val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, FLAG_IMMUTABLE)
-            alarmManager.set(AlarmManager.RTC_WAKEUP, timeInMillis, pendingIntent)
-            Timber.d("Set next alarm for %s (%d)", nextAlarmTime, timeInMillis)
         }
     }
 }

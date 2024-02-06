@@ -1,6 +1,8 @@
 package com.beyondnull.flexibletodos
 
 import android.app.Application
+import com.beyondnull.flexibletodos.manager.AlarmManager
+import com.beyondnull.flexibletodos.manager.NotificationManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -16,10 +18,12 @@ class MainApplication : Application() {
         }
 
         // Trigger notifications and alarms based on task state
-        AppNotificationManager.watchTasksAndUpdateNotificationsAndAlarms(
+        NotificationManager.watchTasksAndUpdateNotifications(
             this,
             applicationScope
         )
+
+        AlarmManager(this, applicationScope).watchTasksAndSetAlarm()
     }
 
     companion object {

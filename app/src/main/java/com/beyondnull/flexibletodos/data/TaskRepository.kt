@@ -1,12 +1,15 @@
 package com.beyondnull.flexibletodos.data
 
+import android.content.Context
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 /**
  * Abstracted Repository as promoted by the Architecture Guide.
@@ -68,5 +71,16 @@ class TaskRepository(private val taskDao: TaskDao, private val externalScope: Co
             Timber.d("Delete completion %s", completion)
             taskDao.deleteCompletion(completion)
         }
+    }
+
+    fun nextNotificationTime(context: Context): Flow<LocalDateTime?> {
+        // Find the next alarm time
+        return allTasks
+            .map { tasks ->
+                // Only future alarms
+                tasks.filter { it.nextNotification(context) > LocalDateTime.now() }
+                    .minByOrNull { it.nextNotification(context) }
+                    ?.nextNotification(context)
+            }
     }
 }
