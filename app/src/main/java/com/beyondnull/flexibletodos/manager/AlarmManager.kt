@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.content.Context
 import android.content.Intent
+import com.beyondnull.flexibletodos.BuildConfig
 import com.beyondnull.flexibletodos.data.AppDatabase
 import com.beyondnull.flexibletodos.data.TaskRepository
 import kotlinx.coroutines.CoroutineScope
@@ -15,6 +16,11 @@ class AlarmManager(
     private val appContext: Context,
     private val externalScope: CoroutineScope,
 ) {
+    companion object {
+        const val alarmActionNextNotificationTime =
+            BuildConfig.APPLICATION_ID + ".nextNotificationTime"
+    }
+
     fun watchTasksAndSetAlarm() {
         val dao = AppDatabase.getDatabase(appContext).taskDao()
         val taskRepository = TaskRepository(dao, externalScope)
@@ -29,7 +35,9 @@ class AlarmManager(
                     val alarmManager =
                         appContext.getSystemService(Context.ALARM_SERVICE) as android.app.AlarmManager
                     val intent =
-                        Intent(appContext, BroadcastReceiver::class.java)
+                        Intent(appContext, BroadcastReceiver::class.java).apply {
+                            action = alarmActionNextNotificationTime
+                        }
                     val pendingIntent =
                         PendingIntent.getBroadcast(appContext, 0, intent, FLAG_IMMUTABLE)
                     alarmManager.set(
