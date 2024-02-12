@@ -34,4 +34,7 @@
     <string name="next_notification_date">Next Notification Date</string>
     <string name="notification_time">Notification Time</string>
     <string name="override_global_notification_time">Override global notification time</string>
+    <string name="backup_setting_title">Backup</string>
+    <string name="backup_setting_description">Tap to backup the database now</string>
+    <string name="enable_individual_task_notification">Enable notifications for this task</string>
 </resources>

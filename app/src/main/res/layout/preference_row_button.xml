@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/notificationFrequencyPreferenceRow"
+    android:id="@+id/preferenceRowGeneric"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
@@ -10,17 +10,17 @@
     android:paddingVertical="@dimen/settings_row_padding">
 
     <TextView
-        android:id="@+id/notificationFrequencyTitle"
+        android:id="@+id/preferenceTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/notification_frequency_name"
+        android:text=""
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
 
     <TextView
-        android:id="@+id/notificationFrequencyDescription"
+        android:id="@+id/preferenceDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/notification_frequency_description"
+        android:text=""
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
         android:textSize="@dimen/custom_preference_text_size" />
 

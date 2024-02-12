@@ -22,6 +22,7 @@ abstract class AppDatabase : RoomDatabase() {
     companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null
+        private const val DATABASE_NAME = "task_database"
 
         // Migration strategy from version 1 to 2
         private val MIGRATION_1_2 = object : Migration(1, 2) {
@@ -40,7 +41,7 @@ abstract class AppDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "task_database"
+                    DATABASE_NAME
                 )
                     .addMigrations(MIGRATION_1_2)  // Add the migration strategy
                     .build()

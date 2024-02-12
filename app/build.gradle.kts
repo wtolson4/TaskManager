@@ -72,4 +72,5 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation("com.jakewharton.timber:timber:5.0.1")
+    implementation("de.raphaelebner:roomdatabasebackup:1.0.0-beta14")
 }
