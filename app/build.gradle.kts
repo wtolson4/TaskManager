@@ -5,6 +5,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
     kotlin("plugin.serialization") version "1.9.21"
+    id("com.likethesalad.stem") version "2.7.0"
 }
 
 android {

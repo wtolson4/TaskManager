@@ -44,6 +44,11 @@
             layout="@layout/preference_row_button"
             android:selectable="true" />
 
+        <include
+            android:id="@+id/licensesRow"
+            layout="@layout/preference_row_button"
+            android:selectable="true" />
+
     </LinearLayout>
 
 

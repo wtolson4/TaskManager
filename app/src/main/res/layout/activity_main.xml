@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:minHeight="?attr/actionBarSize"
             app:menu="@menu/top_app_bar_main"
-            app:navigationIcon="@drawable/baseline_menu_24"
+            app:navigationIcon="@drawable/baseline_settings_24"
             app:navigationIconTint="?attr/colorOnSurface"
             app:title="@string/app_title"
             app:titleCentered="true" />

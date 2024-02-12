@@ -14,6 +14,7 @@ import com.beyondnull.flexibletodos.data.AppDatabase
 import com.beyondnull.flexibletodos.data.Settings
 import com.beyondnull.flexibletodos.picker.createTimePicker
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.raphaelebner.roomdatabasebackup.core.RoomBackup
 import timber.log.Timber
 import java.time.LocalDate
@@ -31,14 +32,16 @@ class SettingsActivity : AppCompatActivity() {
         val notificationFrequencyRow = findViewById<LinearLayout>(R.id.notificationFrequencyRow)
         val notificationTimeRow = findViewById<LinearLayout>(R.id.notificationTimeRow)
         val backupRow = findViewById<LinearLayout>(R.id.backupRow)
+        val licensesRow = findViewById<LinearLayout>(R.id.licensesRow)
 
         // Set click listener for top app bar navigation button
         topAppBar.setNavigationOnClickListener { finish() }
 
-        //
+        // Setup other settings rows
         PreferenceRowNotificationFrequency(this, notificationFrequencyRow)
         PreferenceRowNotificationTime(this, notificationTimeRow)
         PreferenceRowBackup(this, backupRow)
+        PreferenceRowLicenses(this, licensesRow)
     }
     // TODO: (P1) Export / import functionality
     // TODO: (P1) write a script on PC to convert regularly DB to this format
@@ -172,6 +175,33 @@ class SettingsActivity : AppCompatActivity() {
 
         override fun onClick(v: View) {
             backup.backup()
+        }
+    }
+
+    class PreferenceRowLicenses(
+        private val context: Context,
+        holder: View,
+    ) :
+        View.OnClickListener {
+        private var titleView: TextView
+        private var descriptionView: TextView
+
+        init {
+            titleView = holder.findViewById(R.id.preferenceTitle) as TextView
+            titleView.text = context.getString(R.string.licenses_settings_title)
+            descriptionView = holder.findViewById(R.id.preferenceDescription) as TextView
+            descriptionView.text = context.getString(R.string.licenses_settings_description)
+            holder.setOnClickListener(this)
+        }
+
+        override fun onClick(v: View) {
+            MaterialAlertDialogBuilder(context)
+                .setTitle(R.string.licenses_settings_title)
+                .setMessage(R.string.licenses_list)
+                .setPositiveButton(R.string.dialog_ok) { _, _ ->
+                    // No-op
+                }
+                .show()
         }
     }
 }

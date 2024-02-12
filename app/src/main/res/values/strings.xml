@@ -37,4 +37,7 @@
     <string name="backup_setting_title">Backup</string>
     <string name="backup_setting_description">Tap to backup the database now</string>
     <string name="enable_individual_task_notification">Enable notifications for this task</string>
+    <string name="licenses_settings_title">Licenses</string>
+    <string name="licenses_settings_description">Tap here for license information</string>
+    <string name="dialog_ok">Ok</string>
 </resources>
