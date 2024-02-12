@@ -78,9 +78,13 @@ class TaskRepository(private val taskDao: TaskDao, private val externalScope: Co
         // Find the next alarm time
         return allTasks
             .map { tasks ->
-                // Only future alarms
-                tasks.filter { it.nextNotification(context) > LocalDateTime.now() }
-                    .minByOrNull { it.nextNotification(context) }
+                tasks
+                    .filter {
+                        val nextNotification = it.nextNotification(context)
+                        // Only tasks with notifications, which are in the future
+                        nextNotification != null && nextNotification > LocalDateTime.now()
+                    }
+                    .minByOrNull { it.nextNotification(context)!! }
                     ?.nextNotification(context)
             }.distinctUntilChanged()
     }

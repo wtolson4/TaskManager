@@ -33,6 +33,7 @@ data class TaskDefinition(
     val creationDate: LocalDate,
     val initialDueDate: LocalDate,
     val frequency: Int,
+    val notificationsEnabled: Boolean,
     val notificationLastDismissed: LocalDateTime?,
     val notificationTime: LocalTime?,
     val notificationFrequency: Int?,
@@ -97,7 +98,11 @@ data class Task(
     val urgency: Int
         get() = 0
 
-    fun nextNotification(context: Context): LocalDateTime {
+    fun nextNotification(context: Context): LocalDateTime? {
+        if (!this.definition.notificationsEnabled) {
+            return null
+        }
+
         val notificationTime =
             this.definition.notificationTime ?: Settings.NotificationTime.get(context)
         val nextDueDateTime = nextDueDate.atTime(notificationTime)

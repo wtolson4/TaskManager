@@ -1,9 +1,6 @@
 package com.beyondnull.flexibletodos.activity
 
-import android.annotation.TargetApi
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -11,10 +8,10 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.beyondnull.flexibletodos.MainApplication
 import com.beyondnull.flexibletodos.R
 import com.beyondnull.flexibletodos.data.AppDatabase
@@ -23,11 +20,13 @@ import com.beyondnull.flexibletodos.data.TaskDefinition
 import com.beyondnull.flexibletodos.data.TaskRepository
 import com.beyondnull.flexibletodos.data.TaskViewModel
 import com.beyondnull.flexibletodos.data.TaskViewModelFactory
+import com.beyondnull.flexibletodos.manager.PermissionRequester
 import com.beyondnull.flexibletodos.picker.createDatePicker
 import com.beyondnull.flexibletodos.picker.createTimePicker
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.materialswitch.MaterialSwitch
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.LocalDate
 import java.time.LocalTime
@@ -55,14 +54,18 @@ class EditTaskActivity : AppCompatActivity() {
         val existingId = bundle?.getInt("taskId")
         val existingTask = existingId?.let { viewModel.getTaskById(it) }
 
+        // Data for this activity
         val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)
         val timeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
+        val permissionRequester = PermissionRequester(this)
 
         // Reference UI components
         val taskNameEditText = findViewById<EditText>(R.id.taskNameEditText)
         val descriptionEditText = findViewById<EditText>(R.id.descriptionEditText)
         val initialDueEditText = findViewById<TextView>(R.id.initialDueEditText)
         val nextDueEditText = findViewById<TextView>(R.id.nextDueEditText)
+        val enableTaskNotificationSwitch =
+            findViewById<MaterialSwitch>(R.id.enableIndividualTaskNotifications)
         val overrideGlobalNotificationSwitch =
             findViewById<MaterialSwitch>(R.id.overrideGlobalNotificationTimeSwitch)
         val notificationTimeEditText = findViewById<TextView>(R.id.notificationTimeEditText)
@@ -73,46 +76,8 @@ class EditTaskActivity : AppCompatActivity() {
         val cancelButton = findViewById<Button>(R.id.cancelButton)
         val topAppBar = findViewById<MaterialToolbar>(R.id.topAppBar)
 
-        // Task saving logic
-        val saveTask = {
-            val taskName = taskNameEditText.text.toString().trim()
-            val description = descriptionEditText.text.toString().trim()
-            val dueDate = initialDueDate
-            val frequency = frequencyEditText.text.toString().toIntOrNull() ?: 0
-
-            if (taskName.isNotEmpty() && dueDate != null) {
-                val newTask = TaskDefinition(
-                    id = existingId
-                        ?: 0, // Insert methods treat 0 as not-set while inserting the item.
-                    name = taskName,
-                    description,
-                    creationDate = LocalDate.now(),
-                    initialDueDate = dueDate,
-                    frequency = frequency,
-                    notificationLastDismissed = existingTask?.value?.definition?.notificationLastDismissed,
-                    notificationTime = notificationTime,
-                    // TODO: (P2) add a way to edit per-task notification frequency in the UI
-                    notificationFrequency = existingTask?.value?.definition?.notificationFrequency
-                )
-                if (existingId == null) {
-                    viewModel.insertTask(newTask, baseContext)
-                } else {
-                    viewModel.update(newTask, baseContext)
-                }
-                Toast.makeText(this, "Task saved", Toast.LENGTH_SHORT).show()
-                true
-            } else {
-                Toast.makeText(this, "Task missing details, not saved", Toast.LENGTH_SHORT).show()
-                false
-            }
-        }
-
-        // Save on back button press
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (saveTask()) finish()
-            }
-        })
+        // Initialize UI
+        enableTaskNotificationSwitch.isChecked = true
 
         // Fill in data for modifying existing task
         val taskObserver = Observer<Task?> { incomingTask ->
@@ -128,6 +93,7 @@ class EditTaskActivity : AppCompatActivity() {
                 nextDueEditText.text = it.nextDueDate.format(dateFormatter)
                 initialDueDate = it.definition.initialDueDate
                 notificationTime = it.definition.notificationTime
+                enableTaskNotificationSwitch.isChecked = it.definition.notificationsEnabled
                 overrideGlobalNotificationSwitch.isChecked = !isNull(notificationTime)
                 notificationTimeEditText.text =
                     it.definition.notificationTime?.format(timeFormatter)
@@ -162,6 +128,66 @@ class EditTaskActivity : AppCompatActivity() {
         }
         existingTask?.observe(this, taskObserver)
 
+        // Task saving logic
+        val saveTask = suspend {
+            val taskName = taskNameEditText.text.toString().trim()
+            val description = descriptionEditText.text.toString().trim()
+            val dueDate = initialDueDate
+            val frequency = frequencyEditText.text.toString().toIntOrNull() ?: 0
+            val notificationsEnabled = enableTaskNotificationSwitch.isChecked
+
+            if (notificationsEnabled) {
+                val notificationPermissionGranted =
+                    permissionRequester(android.Manifest.permission.POST_NOTIFICATIONS)
+                if (notificationPermissionGranted) {
+                    Timber.d("Notifications permissions allowed")
+                } else {
+                    Toast.makeText(
+                        this,
+                        "Task Due notification unavailable because permission is denied",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    Timber.w("User denied notifications permission prompt")
+                }
+            }
+
+            if (taskName.isNotEmpty() && dueDate != null) {
+                val newTask = TaskDefinition(
+                    id = existingId
+                        ?: 0, // Insert methods treat 0 as not-set while inserting the item.
+                    name = taskName,
+                    description,
+                    creationDate = LocalDate.now(),
+                    initialDueDate = dueDate,
+                    frequency = frequency,
+                    notificationsEnabled = notificationsEnabled,
+                    notificationLastDismissed = existingTask?.value?.definition?.notificationLastDismissed,
+                    notificationTime = notificationTime,
+                    // TODO: (P2) add a way to edit per-task notification frequency in the UI
+                    notificationFrequency = existingTask?.value?.definition?.notificationFrequency
+                )
+                if (existingId == null) {
+                    viewModel.insertTask(newTask, baseContext)
+                } else {
+                    viewModel.update(newTask, baseContext)
+                }
+                Toast.makeText(this, "Task saved", Toast.LENGTH_SHORT).show()
+                true
+            } else {
+                Toast.makeText(this, "Task missing details, not saved", Toast.LENGTH_SHORT).show()
+                false
+            }
+        }
+
+        // Save on back button press
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                lifecycleScope.launch {
+                    if (saveTask()) finish()
+                }
+            }
+        })
+
         // Handle calendar picker
         initialDueEditText.setOnClickListener {
             createDatePicker(initialDueDate) { localDate ->
@@ -191,55 +217,12 @@ class EditTaskActivity : AppCompatActivity() {
         }
 
         addTaskButton.setOnClickListener {
-            if (saveTask()) finish()
+            lifecycleScope.launch {
+                if (saveTask()) finish()
+            }
         }
         cancelButton.setOnClickListener {
             finish()  // Simply finishes the activity to return to the previous screen.
-        }
-
-        // First, get notification permissions
-        checkAndRequestNotificationPermissions()
-    }
-
-    @TargetApi(Build.VERSION_CODES.TIRAMISU)
-    fun checkAndRequestNotificationPermissions() {
-        val permission = android.Manifest.permission.POST_NOTIFICATIONS
-
-        // Register the permissions callback, which handles the user's response to the
-        // system permissions dialog. Save the return value, an instance of
-        // ActivityResultLauncher. You can use either a val, as shown in this snippet,
-        // or a lateinit var in your onAttach() or onCreate() method.
-        val requestPermissionLauncher = registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) { isGranted: Boolean ->
-            if (isGranted) {
-                // Permission is granted. Continue the action or workflow in your
-                // app. No-op for this app.
-            } else {
-                // Explain to the user that the feature is unavailable because the
-                // features requires a permission that the user has denied. At the
-                // same time, respect the user's decision. Don't link to system
-                // settings in an effort to convince the user to change their
-                // decision.
-                Toast.makeText(
-                    this,
-                    "Task Due notification unavailable because permission is denied",
-                    Toast.LENGTH_LONG
-                ).show()
-                Timber.w("User denied notifications permission prompt")
-            }
-        }
-        if (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED
-        ) {
-            // Permission granted, no-op.
-        } else {
-            if (shouldShowRequestPermissionRationale(permission)
-            ) {
-                // TODO: (P3) show rationale first before launchin launcher to request permission
-            } else {
-                // first request or forever denied case
-                requestPermissionLauncher.launch(permission)
-            }
         }
     }
 }

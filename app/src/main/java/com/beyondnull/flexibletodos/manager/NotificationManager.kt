@@ -152,7 +152,8 @@ class NotificationManager {
             // Check for any notifications that should be firing
             var anyNotifsPresent = false
             for (task in tasks) {
-                if (task.nextNotification(context) < LocalDateTime.now()) {
+                val nextNotification = task.nextNotification(context)
+                if (nextNotification != null && nextNotification < LocalDateTime.now()) {
                     createNotification(context, task)
                     anyNotifsPresent = true
                 } else {

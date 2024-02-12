@@ -73,7 +73,7 @@ class ViewTaskActivity : AppCompatActivity() {
                 frequencyEditText.setText(it.definition.frequency.toString())
                 nextDueEditText.text = it.nextDueDate.format(dateFormatter)
                 nextNotificationEditText.text =
-                    it.nextNotification(baseContext).format(dateTimeFormatter)
+                    it.nextNotification(baseContext)?.format(dateTimeFormatter)
 
                 // Set up the completions RecyclerView
                 completionsRecyclerView.layoutManager = LinearLayoutManager(this)

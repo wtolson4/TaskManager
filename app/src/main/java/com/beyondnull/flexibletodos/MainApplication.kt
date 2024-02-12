@@ -19,6 +19,7 @@ import java.util.Date
 import java.util.Locale
 
 class MainApplication : Application() {
+    // TODO: (P1.5): create a widget
     override fun onCreate() {
         super.onCreate()
 
