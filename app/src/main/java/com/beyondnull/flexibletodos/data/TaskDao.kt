@@ -29,11 +29,11 @@ interface TaskDao {
     // method so that the whole operation is performed atomically.
     // https://developer.android.com/training/data-storage/room/relationships#one-to-many
     @Transaction
-    @Query("SELECT * FROM TaskDefinition")
+    @Query("SELECT * FROM tasks_table")
     fun getTasks(): Flow<List<Task>>
 
     @Transaction
-    @Query("SELECT * FROM TaskDefinition WHERE id = :taskId")
+    @Query("SELECT * FROM tasks_table WHERE id = :taskId")
     fun getTaskById(taskId: Long): Flow<Task?>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

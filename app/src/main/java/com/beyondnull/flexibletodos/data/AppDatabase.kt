@@ -9,8 +9,8 @@ import androidx.room.TypeConverters
 
 @Database(
     entities = [TaskDefinition::class, CompletionDate::class],
-    version = 2,
-    exportSchema = false
+    version = 1,
+    exportSchema = true
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -22,14 +22,6 @@ abstract class AppDatabase : RoomDatabase() {
         private var INSTANCE: AppDatabase? = null
         private const val DATABASE_NAME = "task_database"
 
-        // Migration strategy from version 1 to 2
-        // TODO: (P4) leaving this as an example
-//        private val MIGRATION_1_2 = object : Migration(1, 2) {
-//            override fun migrate(db: SupportSQLiteDatabase) {
-//                db.execSQL("")
-//            }
-//        }
-
         fun getDatabase(context: Context): AppDatabase {
             val tempInstance = INSTANCE
             if (tempInstance != null) {
@@ -40,9 +32,7 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     DATABASE_NAME
-                )
-                    // .addMigrations(MIGRATION_1_2)  // Add the migration strategy
-                    .build()
+                ).build()
                 INSTANCE = instance
                 return instance
             }

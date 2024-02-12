@@ -43,8 +43,6 @@ class SettingsActivity : AppCompatActivity() {
         PreferenceRowBackup(this, backupRow)
         PreferenceRowLicenses(this, licensesRow)
     }
-    // TODO: (P1) Export / import functionality
-    // TODO: (P1) write a script on PC to convert regularly DB to this format
     // TODO: (P2) Add a settings link to the notification settings
 
     class PreferenceRowNotificationFrequency(private val context: Context, holder: View) :

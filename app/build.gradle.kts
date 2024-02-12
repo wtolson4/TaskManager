@@ -6,6 +6,7 @@ plugins {
     id("com.google.devtools.ksp")
     kotlin("plugin.serialization") version "1.9.21"
     id("com.likethesalad.stem") version "2.7.0"
+    id("androidx.room")
 }
 
 android {
@@ -48,6 +49,10 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }
 
 dependencies {

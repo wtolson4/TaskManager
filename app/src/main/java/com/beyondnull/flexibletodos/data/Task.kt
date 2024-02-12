@@ -25,7 +25,7 @@ import java.util.Objects.isNull
  * See the documentation for the full rich set of annotations.
  * https://developer.android.com/topic/libraries/architecture/room.html
  */
-@Entity
+@Entity(tableName = "tasks_table")
 data class TaskDefinition(
     @PrimaryKey(autoGenerate = true) val id: Int,
     val name: String,
@@ -44,6 +44,7 @@ data class CompletionDate(
     @PrimaryKey(autoGenerate = true) val id: Int,
     val taskId: Int,
     val date: LocalDate,
+    val note: String?,
 )
 
 // https://developer.android.com/training/data-storage/room/relationships
