@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.beyondnull.flexibletodos.BuildConfig
 import com.beyondnull.flexibletodos.R
-import com.beyondnull.flexibletodos.calculation.GlobalFrequencyScaling
+import com.beyondnull.flexibletodos.calculation.GlobalPeriodScaling
 import com.beyondnull.flexibletodos.data.AppDatabase
 import com.beyondnull.flexibletodos.data.Settings
 import com.beyondnull.flexibletodos.picker.createTimePicker
@@ -53,7 +53,7 @@ class SettingsActivity : AppCompatActivity() {
         private var descriptionView: TextView
 
         init {
-            val currentFrequency = Settings.NotificationFrequency.get(context)
+            val currentFrequency = Settings.NotificationPeriodScale.get(context)
 
             titleView = holder.findViewById(R.id.preferenceTitle) as TextView
             titleView.text = context.getString(R.string.notification_frequency_name)
@@ -71,7 +71,7 @@ class SettingsActivity : AppCompatActivity() {
             val examples =
                 intArrayOf(1, 2, 3, 5, 7, 14, 30, 60, 90, 180, 365, 730).joinToString("\n") {
                     "Task due every $it days: Notification every ${
-                        GlobalFrequencyScaling.scale(
+                        GlobalPeriodScaling.scale(
                             it,
                             currentFrequency
                         )
@@ -79,17 +79,17 @@ class SettingsActivity : AppCompatActivity() {
                 }
             return String.format(
                 context.getString(R.string.notification_frequency_description)
-                        + " ($currentFrequency of ${Settings.NotificationFrequency.max})"
+                        + " ($currentFrequency of ${Settings.NotificationPeriodScale.max})"
                         + "\n" + examples
             )
         }
 
         override fun onClick(v: View) {
-            val currentFrequency = Settings.NotificationFrequency.get(context)
+            val currentFrequency = Settings.NotificationPeriodScale.get(context)
             val newFrequency =
-                (currentFrequency % Settings.NotificationFrequency.max) + Settings.NotificationFrequency.min
+                (currentFrequency % Settings.NotificationPeriodScale.max) + Settings.NotificationPeriodScale.min
             // TODO: (P2) replace with a slider
-            Settings.NotificationFrequency.set(context, newFrequency)
+            Settings.NotificationPeriodScale.set(context, newFrequency)
             descriptionView.text = formatDescriptionString(newFrequency)
         }
 
@@ -157,7 +157,7 @@ class SettingsActivity : AppCompatActivity() {
             backup = RoomBackup(context).database(AppDatabase.getDatabase(context))
                 .enableLogDebug(BuildConfig.DEBUG)
                 .backupLocation(RoomBackup.BACKUP_FILE_LOCATION_CUSTOM_DIALOG)
-                .customBackupFileName(context.getString(R.string.backup_setting_title) + LocalDate.now() + ".sqlite3")
+                .customBackupFileName(context.getString(R.string.app_name) + LocalDate.now() + ".sqlite3")
                 .apply {
                     onCompleteListener { success, message, exitCode ->
                         Timber.d("RoomBackup: success: $success, message: $message, exitCode: $exitCode")
@@ -177,10 +177,10 @@ class SettingsActivity : AppCompatActivity() {
             MaterialAlertDialogBuilder(context)
                 .setTitle("temp do backup?")
                 .setMessage("temp restore or backup")
-                .setNegativeButton(R.string.dialog_ok) { _, _ ->
+                .setNegativeButton("restore") { _, _ ->
                     backup.restore()
                 }
-                .setPositiveButton(R.string.dialog_ok) { _, _ ->
+                .setPositiveButton("backup") { _, _ ->
                     backup.backup()
                 }
                 .show()

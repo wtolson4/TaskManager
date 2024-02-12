@@ -12,7 +12,6 @@
     <string name="delete_occurrence_dialog_title">Delete this completion?</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_delete">Delete</string>
-    <string name="app_title">Regularly Remastered</string>
     <string name="due_today">due today</string>
     <string name="due_tomorrow">due tomorrow</string>
     <string name="due_in_n_days">due in %1$d days</string>
@@ -25,7 +24,7 @@
     </plurals>
     <string name="edit">edit</string>
     <string name="settings_title">Settings</string>
-    <string name="frequency">Period (days)</string>
+    <string name="period">Period (days)</string>
     <string name="delete">delete</string>
     <string name="delete_task_dialog_title">Delete this task?</string>
     <string name="notification_time_name">Notification time</string>

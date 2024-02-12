@@ -57,11 +57,11 @@
                 android:layout_weight="1">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/frequencyEditText"
+                    android:id="@+id/periodEditText"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:enabled="false"
-                    android:hint="@string/frequency"
+                    android:hint="@string/period"
                     android:inputType="number" />
             </com.google.android.material.textfield.TextInputLayout>
 

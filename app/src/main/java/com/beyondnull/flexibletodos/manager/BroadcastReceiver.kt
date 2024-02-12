@@ -80,7 +80,6 @@ class BroadcastReceiver : android.content.BroadcastReceiver() {
                                         repository.insertCompletion(
                                             taskId = task.definition.id,
                                             completionDate = LocalDate.now(),
-                                            frequencyWhenCompleted = task.definition.frequency
                                         )
                                     }
                                 }

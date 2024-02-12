@@ -71,7 +71,7 @@ class EditTaskActivity : AppCompatActivity() {
         val notificationTimeEditText = findViewById<TextView>(R.id.notificationTimeEditText)
         var initialDueDate: LocalDate? = null
         var notificationTime: LocalTime? = null
-        val frequencyEditText = findViewById<EditText>(R.id.frequencyEditText)
+        val periodEditText = findViewById<EditText>(R.id.periodEditText)
         val addTaskButton = findViewById<Button>(R.id.saveTaskButton)
         val cancelButton = findViewById<Button>(R.id.cancelButton)
         val topAppBar = findViewById<MaterialToolbar>(R.id.topAppBar)
@@ -89,7 +89,7 @@ class EditTaskActivity : AppCompatActivity() {
                 // Fill in data
                 taskNameEditText.setText(it.definition.name)
                 descriptionEditText.setText(it.definition.description)
-                frequencyEditText.setText(it.definition.frequency.toString())
+                periodEditText.setText(it.definition.period.toString())
                 nextDueEditText.text = it.nextDueDate.format(dateFormatter)
                 initialDueDate = it.definition.initialDueDate
                 notificationTime = it.definition.notificationTime
@@ -133,7 +133,7 @@ class EditTaskActivity : AppCompatActivity() {
             val taskName = taskNameEditText.text.toString().trim()
             val description = descriptionEditText.text.toString().trim()
             val dueDate = initialDueDate
-            val frequency = frequencyEditText.text.toString().toIntOrNull() ?: 0
+            val period = periodEditText.text.toString().toIntOrNull() ?: 0
             val notificationsEnabled = enableTaskNotificationSwitch.isChecked
 
             if (notificationsEnabled) {
@@ -159,12 +159,12 @@ class EditTaskActivity : AppCompatActivity() {
                     description,
                     creationDate = LocalDate.now(),
                     initialDueDate = dueDate,
-                    frequency = frequency,
+                    period = period,
                     notificationsEnabled = notificationsEnabled,
                     notificationLastDismissed = existingTask?.value?.definition?.notificationLastDismissed,
                     notificationTime = notificationTime,
-                    // TODO: (P2) add a way to edit per-task notification frequency in the UI
-                    notificationFrequency = existingTask?.value?.definition?.notificationFrequency
+                    // TODO: (P2) add a way to edit per-task notification period in the UI
+                    notificationPeriod = existingTask?.value?.definition?.notificationPeriod
                 )
                 if (existingId == null) {
                     viewModel.insertTask(newTask, baseContext)

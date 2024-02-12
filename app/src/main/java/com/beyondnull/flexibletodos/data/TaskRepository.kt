@@ -53,7 +53,6 @@ class TaskRepository(private val taskDao: TaskDao, private val externalScope: Co
     suspend fun insertCompletion(
         taskId: Int,
         completionDate: LocalDate,
-        frequencyWhenCompleted: Int
     ) {
         externalScope.launch {
             Timber.d("Add completion for task ID %s: %s", taskId, completionDate)
@@ -61,7 +60,6 @@ class TaskRepository(private val taskDao: TaskDao, private val externalScope: Co
                 id = 0, // Insert methods treat 0 as not-set while inserting the item. (i.e. use
                 taskId = taskId,
                 date = completionDate,
-                frequencyWhenCompleted = frequencyWhenCompleted,
             )
             taskDao.insertCompletion(completion)
         }

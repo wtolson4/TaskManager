@@ -51,7 +51,6 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
             repository.insertCompletion(
                 taskId = task.definition.id,
                 completionDate = date,
-                frequencyWhenCompleted = task.definition.frequency
             )
         }
 

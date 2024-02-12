@@ -31,7 +31,7 @@ class Settings {
     }
 
 
-    class NotificationFrequency {
+    class NotificationPeriodScale {
 
         companion object {
             private const val key = "global_notification_frequency"

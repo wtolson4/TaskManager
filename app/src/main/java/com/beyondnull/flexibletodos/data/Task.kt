@@ -6,7 +6,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 import com.beyondnull.flexibletodos.R
-import com.beyondnull.flexibletodos.calculation.GlobalFrequencyScaling
+import com.beyondnull.flexibletodos.calculation.GlobalPeriodScaling
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -32,11 +32,11 @@ data class TaskDefinition(
     val description: String,
     val creationDate: LocalDate,
     val initialDueDate: LocalDate,
-    val frequency: Int,
+    val period: Int,
     val notificationsEnabled: Boolean,
     val notificationLastDismissed: LocalDateTime?,
     val notificationTime: LocalTime?,
-    val notificationFrequency: Int?,
+    val notificationPeriod: Int?,
 )
 
 @Entity(tableName = "completion_date_table")
@@ -44,7 +44,6 @@ data class CompletionDate(
     @PrimaryKey(autoGenerate = true) val id: Int,
     val taskId: Int,
     val date: LocalDate,
-    val frequencyWhenCompleted: Int,
 )
 
 // https://developer.android.com/training/data-storage/room/relationships
@@ -70,7 +69,7 @@ data class Task(
             return if (this.completions.isEmpty()) this.definition.initialDueDate
             else {
                 val latestCompletion = this.completions.last()
-                latestCompletion.date.plusDays(this.definition.frequency.toLong())
+                latestCompletion.date.plusDays(this.definition.period.toLong())
             }
         }
 
@@ -121,18 +120,18 @@ data class Task(
                 nextDueDateTime
             } else {
                 // Due date is before the last dismissal.
-                // Based on notification frequency, determine the closest scheduled notification times to today
-                val notificationFrequency =
-                    definition.notificationFrequency ?: GlobalFrequencyScaling.scale(
-                        definition.frequency,
-                        Settings.NotificationFrequency.get(context)
+                // Based on notification period, determine the closest scheduled notification times to today
+                val notificationPeriod =
+                    definition.notificationPeriod ?: GlobalPeriodScaling.scale(
+                        definition.period,
+                        Settings.NotificationPeriodScale.get(context)
                     )
                 val daysSinceDue = Period.between(nextDueDate, LocalDate.now()).days
-                val remainder = daysSinceDue % notificationFrequency
+                val remainder = daysSinceDue % notificationPeriod
                 val lastScheduledNotification =
                     LocalDate.now().minusDays(remainder.toLong()).atTime(notificationTime)
                 val nextScheduledNotification =
-                    lastScheduledNotification.plusDays(notificationFrequency.toLong())
+                    lastScheduledNotification.plusDays(notificationPeriod.toLong())
                 // Compare the scheduled notifications to the last smissal
                 if (lastScheduledNotification > definition.notificationLastDismissed) lastScheduledNotification
                 else nextScheduledNotification
