@@ -6,8 +6,6 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Database(
     entities = [TaskDefinition::class, CompletionDate::class],
@@ -25,12 +23,12 @@ abstract class AppDatabase : RoomDatabase() {
         private const val DATABASE_NAME = "task_database"
 
         // Migration strategy from version 1 to 2
-        private val MIGRATION_1_2 = object : Migration(1, 2) {
-            override fun migrate(db: SupportSQLiteDatabase) {
-                // Leaving this here as a placeholder
-                db.execSQL("")
-            }
-        }
+        // TODO: (P4) leaving this as an example
+//        private val MIGRATION_1_2 = object : Migration(1, 2) {
+//            override fun migrate(db: SupportSQLiteDatabase) {
+//                db.execSQL("")
+//            }
+//        }
 
         fun getDatabase(context: Context): AppDatabase {
             val tempInstance = INSTANCE
@@ -43,7 +41,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     DATABASE_NAME
                 )
-                    .addMigrations(MIGRATION_1_2)  // Add the migration strategy
+                    // .addMigrations(MIGRATION_1_2)  // Add the migration strategy
                     .build()
                 INSTANCE = instance
                 return instance

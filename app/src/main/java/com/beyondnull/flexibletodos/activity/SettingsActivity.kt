@@ -139,7 +139,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     class PreferenceRowBackup(
-        context: Context,
+        private val context: Context,
         holder: View,
     ) :
         View.OnClickListener {
@@ -174,7 +174,16 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         override fun onClick(v: View) {
-            backup.backup()
+            MaterialAlertDialogBuilder(context)
+                .setTitle("temp do backup?")
+                .setMessage("temp restore or backup")
+                .setNegativeButton(R.string.dialog_ok) { _, _ ->
+                    backup.restore()
+                }
+                .setPositiveButton(R.string.dialog_ok) { _, _ ->
+                    backup.backup()
+                }
+                .show()
         }
     }
 

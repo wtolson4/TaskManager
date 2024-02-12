@@ -21,20 +21,14 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
     //   the UI when the data actually changes.
     // - Repository is completely separated from the UI through the ViewModel.
     private val _allTasks: LiveData<List<Task>> = repository.allTasks.asLiveData()
-    private fun sortCompletionsByDate(t: Task): Task {
-        val newCompletions = t.completions.sortedBy { it.date }
-        return t.copy(completions = newCompletions)
-    }
 
     val allTasks: LiveData<List<Task>> =
         this._allTasks.map { tasks ->
-            val withSortedCompletions = tasks.map { sortCompletionsByDate(it) }
-            withSortedCompletions.sortedBy { it.daysUntilDue }
+            tasks.sortedBy { it.daysUntilDue }
         }
 
     fun getTaskById(taskId: Int): LiveData<Task?> {
         return repository.getTaskById(taskId).asLiveData()
-            .map { it?.let { sortCompletionsByDate(it) } }
     }
 
     /**

@@ -54,12 +54,17 @@ data class Task(
         parentColumn = "id",
         entityColumn = "taskId"
     )
-    val completions: List<CompletionDate>,
+    val completionsUnsorted: List<CompletionDate>,
 ) {
     /* The compiler only uses the properties defined inside the primary constructor for the
      automatically generated functions. To exclude a property from the generated implementations,
      declare it inside the class body
      */
+    val completions: List<CompletionDate>
+        get() {
+            return this.completionsUnsorted.sortedBy { it.date }
+        }
+
     val nextDueDate: LocalDate
         get() {
             return if (this.completions.isEmpty()) this.definition.initialDueDate
