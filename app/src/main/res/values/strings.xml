@@ -18,6 +18,11 @@
     <string name="due_in_n_days">due in %1$d days</string>
     <string name="due_one_day_ago">due yesterday</string>
     <string name="due_n_days_ago">due %1$d days ago</string>
+    <string name="done_after_baseline_days">baseline</string>
+    <plurals name="done_after_n_days">
+        <item quantity="one">done %1$d day later</item>
+        <item quantity="other">done %1$d days later</item>
+    </plurals>
     <string name="edit">edit</string>
     <string name="settings_title">Settings</string>
     <string name="frequency">Period (days)</string>

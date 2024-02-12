@@ -125,13 +125,27 @@ class CompletionsAdapter(private val viewModel: TaskViewModel) :
         private val recurrenceTimelinessTextView: TextView =
             itemView.findViewById(R.id.recurrenceTimelinessTextView)
 
-        fun bind(currentCompletion: CompletionDate, viewModel: TaskViewModel) {
+        fun bind(
+            currentCompletion: CompletionDate,
+            previousCompletion: CompletionDate?,
+            viewModel: TaskViewModel
+        ) {
             val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)
             recurrenceDateTextView.text = currentCompletion.date.format(dateFormatter)
 
-            // TODO: (P1) add "timeliness" of this completion
             // TODO: (P3) also consider logging the recurrence at the time of this completion
-            recurrenceTimelinessTextView.text = currentCompletion.id.toString()
+            val daysSinceLastCompletion =
+                previousCompletion?.date?.until(currentCompletion.date)?.days
+            recurrenceTimelinessTextView.text = if (daysSinceLastCompletion == null) {
+                context.resources.getString(R.string.done_after_baseline_days)
+            } else {
+                context.resources.getQuantityString(
+                    R.plurals.done_after_n_days,
+                    daysSinceLastCompletion,
+                    daysSinceLastCompletion
+                )
+            }
+
 
             itemView.setOnClickListener {
                 MaterialAlertDialogBuilder(context)
@@ -157,6 +171,11 @@ class CompletionsAdapter(private val viewModel: TaskViewModel) :
     }
 
     override fun onBindViewHolder(holder: CompletionsViewHolder, position: Int) {
-        holder.bind(getItem(position), viewModel)
+        val previousCompletion = if (position > 0) {
+            getItem(position - 1)
+        } else {
+            null
+        }
+        holder.bind(getItem(position), previousCompletion, viewModel)
     }
 }
