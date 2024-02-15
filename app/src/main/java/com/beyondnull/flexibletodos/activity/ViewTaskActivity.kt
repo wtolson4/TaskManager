@@ -80,7 +80,7 @@ class ViewTaskActivity : AppCompatActivity() {
                 val completionsAdapter = CompletionsAdapter(viewModel)  // Pass the viewModel here
                 completionsRecyclerView.adapter = completionsAdapter
                 // Observe changes in the data and update the RecyclerView
-                completionsAdapter.submitList(incomingTask.completions)
+                completionsAdapter.submitList(incomingTask.completions.reversed())
 
                 // Button for adding more completions
                 logCompletionButton.setOnClickListener {
@@ -171,8 +171,8 @@ class CompletionsAdapter(private val viewModel: TaskViewModel) :
     }
 
     override fun onBindViewHolder(holder: CompletionsViewHolder, position: Int) {
-        val previousCompletion = if (position > 0) {
-            getItem(position - 1)
+        val previousCompletion = if (position + 1 < itemCount) {
+            getItem(position + 1)
         } else {
             null
         }
