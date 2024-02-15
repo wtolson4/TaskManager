@@ -149,19 +149,18 @@ class NotificationManager {
         }
 
         private fun updateNotifications(context: Context, tasks: List<Task>) {
-            // Get the existing notifications
-            val activeNotifications = NotificationManagerCompat.from(context).activeNotifications
             var anyNotifsPresent = false
 
+            Timber.d("Checking for notification updates")
             for (task in tasks) {
                 // Check for any notifications that should be firing
                 val nextNotification = task.nextNotification(context)
                 if (nextNotification != null && nextNotification < LocalDateTime.now()) {
                     // Check if the notification already exists before firing a new one
-                    if (activeNotifications.find { it.id == task.definition.id } == null) {
+                    if (NotificationManagerCompat.from(context).activeNotifications.find { it.id == task.definition.id } == null) {
                         createNotification(context, task)
                     } else {
-                        Timber.d("Notififcation already exists for ID ${task.definition.id} ")
+                        // Timber.d("Notification already exists for ID ${task.definition.id} ")
                     }
                     anyNotifsPresent = true
                 } else {
@@ -188,6 +187,7 @@ class NotificationManager {
             externalScope.launch {
                 Timber.d("Starting to watch for task changes to trigger alarms")
                 repository.allTasks.collect { tasks ->
+                    Timber.d("Got updated tasks")
                     updateNotifications(
                         context,
                         tasks
