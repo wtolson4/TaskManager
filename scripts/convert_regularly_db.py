@@ -47,7 +47,12 @@ for row in old_db["tasks"].rows:
         'name': row['name'],
         'description': row['details'],
         'creationDate': row['created'],
-        'initialDueDate': row['firstdue'] or row['created'], # This should really be "row['created'] + row['period']", but it's rare enough that it's not worth worrying about
+        # In Regularly, "row['firstdue']" is only populated if explicitly selected. Otherwise, the
+        # initial due date is calculated "(row['created'] + row['period'])". In our app, we always
+        # set the initial due date. Falling back to "row['created']" is easier than calculating
+        # "(row['created'] + row['period'])", but it will give an incorrect result for tasks that
+        # have never yet been completed. That's rare enough that it's not worth worrying about.
+        'initialDueDate': row['firstdue'] or row['created'],
         'period': row['period'],
         'notificationsEnabled': row['notifications_enabled'],
         'notificationLastDismissed': row['lastnotified'] + "T00:00:00" if row['lastnotified'] else None,
@@ -63,3 +68,10 @@ for row in old_db["log"].rows:
         'date': row['entrydate'],
         'note': row['note'],
     })
+
+# Android stores a version here, and uses it to determine if a migration is necessary. If it is
+# unset, it defaults to "0". Room assumes that a "version 0" DB is a prepolutated DB that matches
+# the _latest_ schema. Instead, set this to version 1, which is what the schema above matches.
+# https://android.googlesource.com/platform/frameworks/base/+/74f170f9468d3cf6d7d0ef453320141a3e63571b/core/java/android/database/sqlite/SQLiteOpenHelper.java#137
+#
+new_db.execute("PRAGMA user_version = 1")
