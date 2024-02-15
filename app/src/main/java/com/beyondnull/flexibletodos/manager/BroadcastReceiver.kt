@@ -46,11 +46,11 @@ class BroadcastReceiver : android.content.BroadcastReceiver() {
                         val allTasks = repository.allTasks.first()
                         val randomTask = allTasks.firstOrNull()
                         randomTask?.let {
-                            Timber.d("Hack: Updating ${randomTask.definition.id} to kick db")
-                            val existingDescription = randomTask.definition.description
-                            val newTaskDef = randomTask.definition.copy(description = "")
+                            Timber.d("Hack: Updating ${randomTask.id} to kick db")
+                            val existingDescription = randomTask.description
+                            val newTaskDef = randomTask.copy(description = "")
                             repository.updateTask(newTaskDef)
-                            repository.updateTask(randomTask.definition)
+                            repository.updateTask(randomTask)
                         }
 
 
@@ -70,17 +70,14 @@ class BroadcastReceiver : android.content.BroadcastReceiver() {
                                 when (intent.action) {
                                     notificationActionCancelled -> {
                                         val newTaskDef =
-                                            task.definition.copy(
+                                            task.copy(
                                                 notificationLastDismissed = LocalDateTime.now()
                                             )
                                         repository.updateTask(newTaskDef)
                                     }
 
                                     notificationActionMarkAsDone -> {
-                                        repository.insertCompletion(
-                                            taskId = task.definition.id,
-                                            completionDate = LocalDate.now(),
-                                        )
+                                        repository.insertCompletion(task, LocalDate.now())
                                     }
                                 }
                             }

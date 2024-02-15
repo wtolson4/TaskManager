@@ -16,7 +16,6 @@ import com.beyondnull.flexibletodos.MainApplication
 import com.beyondnull.flexibletodos.R
 import com.beyondnull.flexibletodos.data.AppDatabase
 import com.beyondnull.flexibletodos.data.Task
-import com.beyondnull.flexibletodos.data.TaskDefinition
 import com.beyondnull.flexibletodos.data.TaskRepository
 import com.beyondnull.flexibletodos.data.TaskViewModel
 import com.beyondnull.flexibletodos.data.TaskViewModelFactory
@@ -87,16 +86,16 @@ class EditTaskActivity : AppCompatActivity() {
                 (nextDueEditText.parent.parent as View).visibility = View.VISIBLE
 
                 // Fill in data
-                taskNameEditText.setText(it.definition.name)
-                descriptionEditText.setText(it.definition.description)
-                periodEditText.setText(it.definition.period.toString())
+                taskNameEditText.setText(it.name)
+                descriptionEditText.setText(it.description)
+                periodEditText.setText(it.period.toString())
                 nextDueEditText.text = it.nextDueDate.format(dateFormatter)
-                initialDueDate = it.definition.initialDueDate
-                notificationTime = it.definition.notificationTime
-                enableTaskNotificationSwitch.isChecked = it.definition.notificationsEnabled
+                initialDueDate = it.initialDueDate
+                notificationTime = it.notificationTime
+                enableTaskNotificationSwitch.isChecked = it.notificationsEnabled
                 overrideGlobalNotificationSwitch.isChecked = !isNull(notificationTime)
                 notificationTimeEditText.text =
-                    it.definition.notificationTime?.format(timeFormatter)
+                    it.notificationTime?.format(timeFormatter)
 
                 // Menu buttons
                 topAppBar.menu.findItem(R.id.deleteButton)?.setVisible(true)
@@ -106,7 +105,7 @@ class EditTaskActivity : AppCompatActivity() {
                             // Delete task button
                             MaterialAlertDialogBuilder(this)
                                 .setTitle(R.string.delete_task_dialog_title)
-                                .setMessage(incomingTask.definition.name)
+                                .setMessage(incomingTask.name)
                                 .setNegativeButton(R.string.dialog_cancel) { dialog, which ->
                                     // Respond to negative button press
                                 }
@@ -152,19 +151,20 @@ class EditTaskActivity : AppCompatActivity() {
             }
 
             if (taskName.isNotEmpty() && dueDate != null) {
-                val newTask = TaskDefinition(
+                val newTask = Task(
                     id = existingId
                         ?: 0, // Insert methods treat 0 as not-set while inserting the item.
                     name = taskName,
                     description,
-                    creationDate = LocalDate.now(),
+                    creationDate = existingTask?.value?.creationDate ?: LocalDate.now(),
                     initialDueDate = dueDate,
                     period = period,
                     notificationsEnabled = notificationsEnabled,
-                    notificationLastDismissed = existingTask?.value?.definition?.notificationLastDismissed,
+                    notificationLastDismissed = existingTask?.value?.notificationLastDismissed,
                     notificationTime = notificationTime,
                     // TODO: (P2) add a way to edit per-task notification period in the UI
-                    notificationPeriod = existingTask?.value?.definition?.notificationPeriod
+                    notificationPeriod = existingTask?.value?.notificationPeriod,
+                    lastCompleted = existingTask?.value?.lastCompleted
                 )
                 if (existingId == null) {
                     viewModel.insertTask(newTask, baseContext)

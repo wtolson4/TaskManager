@@ -1,10 +1,8 @@
 package com.beyondnull.flexibletodos.data
 
 import android.content.Context
-import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.Relation
 import com.beyondnull.flexibletodos.R
 import com.beyondnull.flexibletodos.calculation.GlobalPeriodScaling
 import java.time.LocalDate
@@ -25,8 +23,16 @@ import java.util.Objects.isNull
  * See the documentation for the full rich set of annotations.
  * https://developer.android.com/topic/libraries/architecture/room.html
  */
+@Entity(tableName = "completion_date_table")
+data class CompletionDate(
+    @PrimaryKey(autoGenerate = true) val id: Int,
+    val taskId: Int,
+    val date: LocalDate,
+    val note: String?,
+)
+
 @Entity(tableName = "tasks_table")
-data class TaskDefinition(
+data class Task(
     @PrimaryKey(autoGenerate = true) val id: Int,
     val name: String,
     val description: String,
@@ -37,47 +43,20 @@ data class TaskDefinition(
     val notificationLastDismissed: LocalDateTime?,
     val notificationTime: LocalTime?,
     val notificationPeriod: Int?,
-)
-
-@Entity(tableName = "completion_date_table")
-data class CompletionDate(
-    @PrimaryKey(autoGenerate = true) val id: Int,
-    val taskId: Int,
-    val date: LocalDate,
-    val note: String?,
-)
-
-// https://developer.android.com/training/data-storage/room/relationships
-data class Task(
-    @Embedded val definition: TaskDefinition,
-    @Relation(
-        parentColumn = "id",
-        entityColumn = "taskId"
-    )
-    val completionsUnsorted: List<CompletionDate>,
+    val lastCompleted: LocalDate?,
 ) {
-    /* The compiler only uses the properties defined inside the primary constructor for the
-     automatically generated functions. To exclude a property from the generated implementations,
-     declare it inside the class body
-     */
-    val completions: List<CompletionDate>
-        get() {
-            return this.completionsUnsorted.sortedBy { it.date }
-        }
-
     val nextDueDate: LocalDate
         get() {
-            return if (this.completions.isEmpty()) this.definition.initialDueDate
+            return if (lastCompleted == null) initialDueDate
             else {
-                val latestCompletion = this.completions.last()
-                latestCompletion.date.plusDays(this.definition.period.toLong())
+                lastCompleted.plusDays(period.toLong())
             }
         }
 
     val daysUntilDue: Int
         get() {
             val today = LocalDate.now()
-            return ChronoUnit.DAYS.between(today, this.nextDueDate).toInt()
+            return ChronoUnit.DAYS.between(today, nextDueDate).toInt()
         }
 
 
@@ -104,37 +83,37 @@ data class Task(
         get() = 0
 
     fun nextNotification(context: Context): LocalDateTime? {
-        if (!this.definition.notificationsEnabled) {
+        if (!notificationsEnabled) {
             return null
         }
 
         val notificationTime =
-            this.definition.notificationTime ?: Settings.NotificationTime.get(context)
+            notificationTime ?: Settings.NotificationTime.get(context)
         val nextDueDateTime = nextDueDate.atTime(notificationTime)
 
         val nextNotificationDateTime =
-            if (isNull(definition.notificationLastDismissed)) {
+            if (isNull(notificationLastDismissed)) {
                 // Notification has never been dismissed, show at next due date
                 nextDueDateTime
-            } else if (nextDueDateTime > definition.notificationLastDismissed) {
+            } else if (nextDueDateTime > notificationLastDismissed) {
                 // Due date is after the last dismissal, notify on due date
                 nextDueDateTime
             } else {
                 // Due date is before the last dismissal.
                 // Based on notification period, determine the closest scheduled notification times to today
-                val notificationPeriod =
-                    definition.notificationPeriod ?: GlobalPeriodScaling.scale(
-                        definition.period,
+                val scaledNotificationPeriod =
+                    notificationPeriod ?: GlobalPeriodScaling.scale(
+                        period,
                         Settings.NotificationPeriodScale.get(context)
                     )
                 val daysSinceDue = Period.between(nextDueDate, LocalDate.now()).days
-                val remainder = daysSinceDue % notificationPeriod
+                val remainder = daysSinceDue % scaledNotificationPeriod
                 val lastScheduledNotification =
                     LocalDate.now().minusDays(remainder.toLong()).atTime(notificationTime)
                 val nextScheduledNotification =
-                    lastScheduledNotification.plusDays(notificationPeriod.toLong())
+                    lastScheduledNotification.plusDays(scaledNotificationPeriod.toLong())
                 // Compare the scheduled notifications to the last smissal
-                if (lastScheduledNotification > definition.notificationLastDismissed) lastScheduledNotification
+                if (lastScheduledNotification > notificationLastDismissed) lastScheduledNotification
                 else nextScheduledNotification
             }
 

@@ -5,7 +5,6 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Transaction
 import androidx.room.TypeConverter
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
@@ -25,31 +24,32 @@ import java.time.format.DateTimeFormatter
 
 @Dao
 interface TaskDao {
-    // This method requires Room to run two queries, so add the @Transaction annotation to this
-    // method so that the whole operation is performed atomically.
-    // https://developer.android.com/training/data-storage/room/relationships#one-to-many
-    @Transaction
     @Query("SELECT * FROM tasks_table")
     fun getTasks(): Flow<List<Task>>
 
-    @Transaction
     @Query("SELECT * FROM tasks_table WHERE id = :taskId")
     fun getTaskById(taskId: Long): Flow<Task?>
 
+    @Query("SELECT * FROM completion_date_table WHERE taskId = :taskId")
+    fun getTaskCompletions(taskId: Long): Flow<List<CompletionDate>>
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertTask(task: TaskDefinition): Long
+    suspend fun insertTask(task: Task): Long
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertCompletion(completion: CompletionDate): Long
 
     @Update
-    suspend fun updateTask(task: TaskDefinition)
+    suspend fun updateTask(task: Task)
 
     @Delete
-    suspend fun deleteTask(task: TaskDefinition)
+    suspend fun deleteTask(task: Task)
 
     @Delete
     suspend fun deleteCompletion(completion: CompletionDate)
+
+    @Query("DELETE FROM completion_date_table WHERE taskId = :taskId")
+    suspend fun deleteTaskCompletions(taskId: Long)
 }
 
 class Converters {

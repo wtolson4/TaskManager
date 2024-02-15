@@ -31,14 +31,18 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
         return repository.getTaskById(taskId).asLiveData()
     }
 
+    fun getTaskCompletions(taskId: Int): LiveData<List<CompletionDate>> {
+        return repository.getTaskCompletions(taskId).asLiveData()
+    }
+
     /**
      * Launching a new coroutine to insert the data in a non-blocking way
      */
-    fun insertTask(task: TaskDefinition, context: Context) = viewModelScope.launch {
+    fun insertTask(task: Task, context: Context) = viewModelScope.launch {
         repository.insertTask(task)
     }
 
-    fun update(task: TaskDefinition, context: Context) = viewModelScope.launch {
+    fun update(task: Task, context: Context) = viewModelScope.launch {
         repository.updateTask(task)
     }
 
@@ -48,15 +52,13 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
 
     fun insertCompletion(task: Task, date: LocalDate, context: Context) =
         viewModelScope.launch {
-            repository.insertCompletion(
-                taskId = task.definition.id,
-                completionDate = date,
-            )
+            repository.insertCompletion(task, date)
         }
 
-    fun deleteCompletion(completion: CompletionDate, context: Context) = viewModelScope.launch {
-        repository.deleteCompletion(completion)
-    }
+    fun deleteCompletion(task: Task, completion: CompletionDate, context: Context) =
+        viewModelScope.launch {
+            repository.deleteCompletion(task, completion)
+        }
 }
 
 class TaskViewModelFactory(private val repository: TaskRepository) : ViewModelProvider.Factory {
@@ -72,7 +74,7 @@ class TaskViewModelFactory(private val repository: TaskRepository) : ViewModelPr
 class TaskDiffCallback : DiffUtil.ItemCallback<Task>() {
 
     override fun areItemsTheSame(oldItem: Task, newItem: Task): Boolean {
-        return oldItem.definition.id == newItem.definition.id
+        return oldItem.id == newItem.id
     }
 
     override fun areContentsTheSame(oldItem: Task, newItem: Task): Boolean {

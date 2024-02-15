@@ -24,19 +24,28 @@ class TaskRepository(private val taskDao: TaskDao, private val externalScope: Co
         return taskDao.getTaskById(taskId.toLong())
     }
 
+    fun getTaskCompletions(taskId: Int): Flow<List<CompletionDate>> {
+        return taskDao.getTaskCompletions(taskId.toLong())
+    }
+
+    fun getLatestTaskCompletion(taskId: Int): Flow<CompletionDate?> {
+        return taskDao.getTaskCompletions(taskId.toLong())
+            .map { completion -> completion.maxByOrNull { it.date } }
+    }
+
     // These follow the "Coroutines & Patterns for work that shouldn’t be cancelled".
     // They use an injected coroutine scope that lasts as long as the application, rather than
     // relying on the caller's scope, which may be shorter (e.g. ViewModel's, which may be tied
     // to a particular activity).
     // https://medium.com/androiddevelopers/coroutines-patterns-for-work-that-shouldnt-be-cancelled-e26c40f142ad
-    suspend fun insertTask(task: TaskDefinition): Task? {
+    suspend fun insertTask(task: Task): Task? {
         return externalScope.async {
             val id = taskDao.insertTask(task)
             taskDao.getTaskById(id).first()
         }.await()
     }
 
-    suspend fun updateTask(task: TaskDefinition) {
+    suspend fun updateTask(task: Task) {
         externalScope.launch {
             Timber.d("Updated task ID %s", task.id)
             taskDao.updateTask(task)
@@ -45,31 +54,40 @@ class TaskRepository(private val taskDao: TaskDao, private val externalScope: Co
 
     suspend fun deleteTask(task: Task) {
         externalScope.launch {
-            Timber.d("Deleted task ID %s", task.definition.id)
-            taskDao.deleteTask(task.definition)
+            Timber.d("Deleted task ID %s", task.id)
+            taskDao.deleteTask(task)
+            taskDao.deleteTaskCompletions(task.id.toLong())
         }
     }
 
     suspend fun insertCompletion(
-        taskId: Int,
+        task: Task,
         completionDate: LocalDate,
     ) {
         externalScope.launch {
-            Timber.d("Add completion for task ID %s: %s", taskId, completionDate)
+            Timber.d("Add completion for task ID %s: %s", task.id, completionDate)
             val completion = CompletionDate(
                 id = 0, // Insert methods treat 0 as not-set while inserting the item. (i.e. use
-                taskId = taskId,
+                taskId = task.id,
                 date = completionDate,
                 note = null,
             )
             taskDao.insertCompletion(completion)
+            // Update task's latest completion
+            val updatedTask =
+                task.copy(lastCompleted = getLatestTaskCompletion(task.id).first()?.date)
+            taskDao.updateTask(updatedTask)
         }
     }
 
-    suspend fun deleteCompletion(completion: CompletionDate) {
+    suspend fun deleteCompletion(task: Task, completion: CompletionDate) {
         externalScope.launch {
             Timber.d("Delete completion %s", completion)
             taskDao.deleteCompletion(completion)
+            // Update task's latest completion
+            val updatedTask =
+                task.copy(lastCompleted = getLatestTaskCompletion(task.id).first()?.date)
+            taskDao.updateTask(updatedTask)
         }
     }
 

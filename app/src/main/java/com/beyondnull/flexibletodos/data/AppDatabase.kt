@@ -6,10 +6,13 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
+import timber.log.Timber
 
 @Database(
-    entities = [TaskDefinition::class, CompletionDate::class],
-    version = 1,
+    entities = [Task::class, CompletionDate::class],
+    version = 2,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -22,6 +25,22 @@ abstract class AppDatabase : RoomDatabase() {
         private var INSTANCE: AppDatabase? = null
         private const val DATABASE_NAME = "task_database"
 
+        val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                Timber.i("Migrating database from 1 to 2")
+                database.execSQL(
+                    "ALTER TABLE tasks_table ADD COLUMN lastCompleted TEXT"
+                )
+                database.execSQL(
+                    "UPDATE tasks_table SET lastCompleted = " +
+                            "(SELECT c.date FROM completion_date_table AS c " +
+                            "WHERE c.taskId = tasks_table.id " +
+                            "ORDER BY c.date DESC " +
+                            "LIMIT 1)"
+                )
+            }
+        }
+
         fun getDatabase(context: Context): AppDatabase {
             val tempInstance = INSTANCE
             if (tempInstance != null) {
@@ -32,7 +51,7 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     DATABASE_NAME
-                ).build()
+                ).addMigrations(MIGRATION_1_2).build()
                 INSTANCE = instance
                 return instance
             }

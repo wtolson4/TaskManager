@@ -64,12 +64,12 @@ class NotificationManager {
             // Create an intent for "mark as done"
             val markAsDoneIntent = Intent(context, BroadcastReceiver::class.java).apply {
                 action = notificationActionMarkAsDone
-                putExtra(notificationExtraTaskIdKey, task.definition.id)
+                putExtra(notificationExtraTaskIdKey, task.id)
             }
             val markAsDonePendingIntent: PendingIntent =
                 PendingIntent.getBroadcast(
                     context,
-                    task.definition.id, // Use a different request code, otherwise this intent will get merged with others: https://stackoverflow.com/a/20205696
+                    task.id, // Use a different request code, otherwise this intent will get merged with others: https://stackoverflow.com/a/20205696
                     markAsDoneIntent,
                     FLAG_IMMUTABLE
                 )
@@ -77,13 +77,13 @@ class NotificationManager {
             // Create an intent for dismissing the notification
             val cancelIntent = Intent(context, BroadcastReceiver::class.java).apply {
                 action = notificationActionCancelled
-                putExtra(notificationExtraTaskIdKey, task.definition.id)
+                putExtra(notificationExtraTaskIdKey, task.id)
             }
             // Use a different request code, otherwise this intent will get merged with others: https://stackoverflow.com/a/20205696
             val cancelPendingIntent: PendingIntent =
                 PendingIntent.getBroadcast(
                     context,
-                    task.definition.id,
+                    task.id,
                     cancelIntent,
                     FLAG_IMMUTABLE
                 )
@@ -93,7 +93,7 @@ class NotificationManager {
 
             val notification = NotificationCompat.Builder(context, notificationChannelId)
                 .setSmallIcon(R.drawable.baseline_task_alt_24)
-                .setContentTitle(task.definition.name)
+                .setContentTitle(task.name)
                 .setContentText(task.getDueDaysString(context))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 // Set the intent that fires when the user taps the notification.
@@ -141,7 +141,7 @@ class NotificationManager {
                     return
                 }
                 // notificationId is a unique int for each notification that you must define.
-                notify(task.definition.id, notification)
+                notify(task.id, notification)
                 notify(notificationIdForGroup, summaryNotification)
             }
 
@@ -157,16 +157,16 @@ class NotificationManager {
                 val nextNotification = task.nextNotification(context)
                 if (nextNotification != null && nextNotification < LocalDateTime.now()) {
                     // Check if the notification already exists before firing a new one
-                    if (NotificationManagerCompat.from(context).activeNotifications.find { it.id == task.definition.id } == null) {
+                    if (NotificationManagerCompat.from(context).activeNotifications.find { it.id == task.id } == null) {
                         createNotification(context, task)
                     } else {
-                        // Timber.d("Notification already exists for ID ${task.definition.id} ")
+                        // Timber.d("Notification already exists for ID ${task.id} ")
                     }
                     anyNotifsPresent = true
                 } else {
                     // Clear all other notification
                     with(NotificationManagerCompat.from(context)) {
-                        cancel(task.definition.id)
+                        cancel(task.id)
                     }
                 }
             }

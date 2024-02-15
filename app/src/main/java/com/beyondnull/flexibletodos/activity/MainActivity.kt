@@ -111,12 +111,12 @@ class TaskAdapter(private val viewModel: TaskViewModel) :
         private val dueDateTextView: TextView = itemView.findViewById(R.id.dueDateTextView)
 
         fun bind(currentTask: Task, viewModel: TaskViewModel) {
-            taskNameTextView.text = currentTask.definition.name
+            taskNameTextView.text = currentTask.name
             dueDateTextView.text = currentTask.getDueDaysString(context)
 
             itemView.setOnClickListener {
                 val intent = Intent(itemView.context, ViewTaskActivity::class.java)
-                intent.putExtra("taskId", currentTask.definition.id)
+                intent.putExtra("taskId", currentTask.id)
                 itemView.context.startActivity(intent)
             }
         }

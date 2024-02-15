@@ -67,20 +67,26 @@ class ViewTaskActivity : AppCompatActivity() {
         val taskObserver = Observer<Task?> { incomingTask ->
             incomingTask?.let {
                 // Fill in data
-                topAppBar.title = it.definition.name
-                taskNameEditText.setText(it.definition.name)
-                descriptionEditText.setText(it.definition.description)
-                periodEditText.setText(it.definition.period.toString())
+                topAppBar.title = it.name
+                taskNameEditText.setText(it.name)
+                descriptionEditText.setText(it.description)
+                periodEditText.setText(it.period.toString())
                 nextDueEditText.text = it.nextDueDate.format(dateFormatter)
                 nextNotificationEditText.text =
                     it.nextNotification(baseContext)?.format(dateTimeFormatter)
 
-                // Set up the completions RecyclerView
-                completionsRecyclerView.layoutManager = LinearLayoutManager(this)
-                val completionsAdapter = CompletionsAdapter(viewModel)  // Pass the viewModel here
-                completionsRecyclerView.adapter = completionsAdapter
-                // Observe changes in the data and update the RecyclerView
-                completionsAdapter.submitList(incomingTask.completions.reversed())
+                // Get and watch completions list
+                val completionsObserver =
+                    Observer<List<CompletionDate>> { incomingCompletionsList ->
+                        // Set up the completions RecyclerView
+                        completionsRecyclerView.layoutManager = LinearLayoutManager(this)
+                        val completionsAdapter =
+                            CompletionsAdapter(viewModel, it)  // Pass the viewModel here
+                        completionsRecyclerView.adapter = completionsAdapter
+                        // Observe changes in the data and update the RecyclerView
+                        completionsAdapter.submitList(incomingCompletionsList.reversed())
+                    }
+                viewModel.getTaskCompletions(it.id).observe(this, completionsObserver)
 
                 // Button for adding more completions
                 logCompletionButton.setOnClickListener {
@@ -96,7 +102,7 @@ class ViewTaskActivity : AppCompatActivity() {
                             // Handle edit text press
                             val intent =
                                 Intent(baseContext, EditTaskActivity::class.java)
-                            intent.putExtra("taskId", incomingTask.definition.id)
+                            intent.putExtra("taskId", incomingTask.id)
                             startActivity(intent)
                             true
                         }
@@ -115,7 +121,7 @@ class ViewTaskActivity : AppCompatActivity() {
     }
 }
 
-class CompletionsAdapter(private val viewModel: TaskViewModel) :
+class CompletionsAdapter(private val viewModel: TaskViewModel, private val task: Task) :
     ListAdapter<CompletionDate, CompletionsAdapter.CompletionsViewHolder>(CompletionDiffCallback()) {
 
     class CompletionsViewHolder(itemView: View, private val context: Context) :
@@ -128,6 +134,7 @@ class CompletionsAdapter(private val viewModel: TaskViewModel) :
         fun bind(
             currentCompletion: CompletionDate,
             previousCompletion: CompletionDate?,
+            task: Task,
             viewModel: TaskViewModel
         ) {
             val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)
@@ -155,7 +162,7 @@ class CompletionsAdapter(private val viewModel: TaskViewModel) :
                         // Respond to negative button press
                     }
                     .setPositiveButton(R.string.dialog_delete) { dialog, which ->
-                        viewModel.deleteCompletion(currentCompletion, context)
+                        viewModel.deleteCompletion(task, currentCompletion, context)
                     }
                     .show()
             }
@@ -176,6 +183,6 @@ class CompletionsAdapter(private val viewModel: TaskViewModel) :
         } else {
             null
         }
-        holder.bind(getItem(position), previousCompletion, viewModel)
+        holder.bind(getItem(position), previousCompletion, task, viewModel)
     }
 }
