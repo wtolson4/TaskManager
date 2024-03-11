@@ -73,7 +73,6 @@ class MainActivity : AppCompatActivity() {
         ViewCompat.setOnApplyWindowInsetsListener(addTaskButton) { view, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             view.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                // TODO: (P1) something about this is broken on API 26
                 this.bottomMargin = insets.bottom + 32
                 this.rightMargin = insets.right + 32
             }
