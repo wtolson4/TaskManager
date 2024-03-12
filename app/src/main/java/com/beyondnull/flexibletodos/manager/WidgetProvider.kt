@@ -1,13 +1,12 @@
 package com.beyondnull.flexibletodos.manager
 
+// TODO(P1): remove Log calls
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
-// TODO(P1): remove Log calls
 import android.util.Log
 import android.widget.RemoteViews
-import androidx.annotation.RequiresApi
 import com.beyondnull.flexibletodos.R
 import com.beyondnull.flexibletodos.data.AppDatabase
 import com.beyondnull.flexibletodos.data.Task
@@ -20,7 +19,6 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class WidgetProvider : AppWidgetProvider() {
-    @RequiresApi(31)
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -57,7 +55,7 @@ class WidgetProvider : AppWidgetProvider() {
                 // Use simplified RemoteViews collections (requires API 31)
                 // https://developer.android.com/about/versions/12/features/widgets#leverage-simplified-remoteview-collections
                 val builder = RemoteViews.RemoteCollectionItems.Builder()
-                tasks.forEachIndexed { index, task ->
+                tasks.forEachIndexed { index, _ ->
                     val listItemRV = RemoteViews(context.packageName, R.layout.widget_list_item)
                     listItemRV.setTextViewText(R.id.taskNameTextView, "foo")
                     builder.addItem(index.toLong(), listItemRV)

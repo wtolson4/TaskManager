@@ -7,7 +7,7 @@
 
     <style name="Theme.MyAppTheme" parent="Base.Theme.MyAppTheme" />
 
-    <style name="MyThemeOverlay" parent="ThemeOverlay.Material3.DynamicColors.DayNight"></style>
+    <style name="MyThemeOverlay" parent="ThemeOverlay.Material3.DynamicColors.DayNight" />
 
-    <style name="MyWidgetTheme" parent="Theme.Material3.DynamicColors.DayNight"></style>
+    <style name="MyWidgetTheme" parent="Theme.Material3.DynamicColors.DayNight" />
 </resources>

@@ -91,7 +91,7 @@ class ViewTaskActivity : AppCompatActivity() {
                 // Button for adding more completions
                 logCompletionButton.setOnClickListener {
                     createDatePicker(null) { localDate ->
-                        viewModel.insertCompletion(incomingTask, localDate, baseContext)
+                        viewModel.insertCompletion(incomingTask, localDate)
                     }.show(supportFragmentManager, "materialDatePicker")
                 }
 
@@ -158,11 +158,11 @@ class CompletionsAdapter(private val viewModel: TaskViewModel, private val task:
                 MaterialAlertDialogBuilder(context)
                     .setTitle(R.string.delete_occurrence_dialog_title)
                     .setMessage(currentCompletion.date.format(dateFormatter))
-                    .setNegativeButton(R.string.dialog_cancel) { dialog, which ->
+                    .setNegativeButton(R.string.dialog_cancel) { _, _ ->
                         // Respond to negative button press
                     }
-                    .setPositiveButton(R.string.dialog_delete) { dialog, which ->
-                        viewModel.deleteCompletion(task, currentCompletion, context)
+                    .setPositiveButton(R.string.dialog_delete) { _, _ ->
+                        viewModel.deleteCompletion(task, currentCompletion)
                     }
                     .show()
             }

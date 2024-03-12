@@ -2,7 +2,6 @@ package com.beyondnull.flexibletodos
 
 import androidx.room.Room
 import androidx.room.testing.MigrationTestHelper
-import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.beyondnull.flexibletodos.data.AppDatabase
@@ -13,10 +12,10 @@ import java.io.IOException
 
 @RunWith(AndroidJUnit4::class)
 class DatabaseMigrationTest {
-    private val TEST_DB = "migration-test"
+    private val testDb = "migration-test"
 
     // Array of all migrations.
-    private val ALL_MIGRATIONS = arrayOf(
+    private val allMigrations = arrayOf(
         AppDatabase.MIGRATION_1_2
     )
 
@@ -24,14 +23,13 @@ class DatabaseMigrationTest {
     val helper: MigrationTestHelper = MigrationTestHelper(
         InstrumentationRegistry.getInstrumentation(),
         AppDatabase::class.java.canonicalName,
-        FrameworkSQLiteOpenHelperFactory()
     )
 
     @Test
     @Throws(IOException::class)
     fun migrateAll() {
         // Create earliest version of the database.
-        helper.createDatabase(TEST_DB, 1).apply {
+        helper.createDatabase(testDb, 1).apply {
             // Database has schema version 1. Insert some data using SQL queries.
             // You can't use DAO classes because they expect the latest schema.
             execSQL(
@@ -68,8 +66,8 @@ class DatabaseMigrationTest {
         Room.databaseBuilder(
             InstrumentationRegistry.getInstrumentation().targetContext,
             AppDatabase::class.java,
-            TEST_DB
-        ).addMigrations(*ALL_MIGRATIONS).build().apply {
+            testDb
+        ).addMigrations(*allMigrations).build().apply {
             openHelper.writableDatabase.close()
         }
     }

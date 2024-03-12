@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
 
         // Set up the RecyclerView
         taskRecyclerView.layoutManager = LinearLayoutManager(this)
-        val taskAdapter = TaskAdapter(viewModel)  // Pass the viewModel here
+        val taskAdapter = TaskAdapter()
         taskRecyclerView.adapter = taskAdapter
         // TODO(P2): Add a message saying "click + to add your first task"
 
@@ -103,7 +103,7 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-class TaskAdapter(private val viewModel: TaskViewModel) :
+class TaskAdapter :
     ListAdapter<Task, TaskAdapter.TaskViewHolder>(TaskDiffCallback()) {
 
     class TaskViewHolder(itemView: View, private val context: Context) :
@@ -111,7 +111,7 @@ class TaskAdapter(private val viewModel: TaskViewModel) :
         private val taskNameTextView: TextView = itemView.findViewById(R.id.taskNameTextView)
         private val dueDateTextView: TextView = itemView.findViewById(R.id.dueDateTextView)
 
-        fun bind(currentTask: Task, viewModel: TaskViewModel) {
+        fun bind(currentTask: Task) {
             taskNameTextView.text = currentTask.name
             dueDateTextView.text = currentTask.getDueDaysString(context)
             dueDateTextView.setTextColor(
@@ -139,6 +139,6 @@ class TaskAdapter(private val viewModel: TaskViewModel) :
     }
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
-        holder.bind(getItem(position), viewModel)
+        holder.bind(getItem(position))
     }
 }

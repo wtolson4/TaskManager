@@ -28,7 +28,7 @@ class TaskRepository(private val taskDao: TaskDao, private val externalScope: Co
         return taskDao.getTaskCompletions(taskId.toLong())
     }
 
-    fun getLatestTaskCompletion(taskId: Int): Flow<CompletionDate?> {
+    private fun getLatestTaskCompletion(taskId: Int): Flow<CompletionDate?> {
         return taskDao.getTaskCompletions(taskId.toLong())
             .map { completion -> completion.maxByOrNull { it.date } }
     }

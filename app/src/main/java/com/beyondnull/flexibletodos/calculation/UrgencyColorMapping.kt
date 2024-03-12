@@ -7,9 +7,8 @@ import androidx.core.graphics.ColorUtils
 import com.beyondnull.flexibletodos.R
 
 class UrgencyColorMapping {
-    public enum class ColorRange {
+    enum class ColorRange {
         STANDARD, EXTENDED, DISCRETE
-
     }
 
     companion object {

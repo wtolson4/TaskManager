@@ -77,11 +77,6 @@ data class Task(
         }
     }
 
-    // TODO: impl urgency
-    // TODO: (P2) Color due text (notification + main view) based on urgency
-    val urgency: Int
-        get() = 0
-
     fun nextNotification(context: Context): LocalDateTime? {
         if (!notificationsEnabled) {
             return null

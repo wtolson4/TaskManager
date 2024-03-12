@@ -1,6 +1,5 @@
 package com.beyondnull.flexibletodos.data
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -38,24 +37,24 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
     /**
      * Launching a new coroutine to insert the data in a non-blocking way
      */
-    fun insertTask(task: Task, context: Context) = viewModelScope.launch {
+    fun insertTask(task: Task) = viewModelScope.launch {
         repository.insertTask(task)
     }
 
-    fun update(task: Task, context: Context) = viewModelScope.launch {
+    fun update(task: Task) = viewModelScope.launch {
         repository.updateTask(task)
     }
 
-    fun delete(task: Task, context: Context) = viewModelScope.launch {
+    fun delete(task: Task) = viewModelScope.launch {
         repository.deleteTask(task)
     }
 
-    fun insertCompletion(task: Task, date: LocalDate, context: Context) =
+    fun insertCompletion(task: Task, date: LocalDate) =
         viewModelScope.launch {
             repository.insertCompletion(task, date)
         }
 
-    fun deleteCompletion(task: Task, completion: CompletionDate, context: Context) =
+    fun deleteCompletion(task: Task, completion: CompletionDate) =
         viewModelScope.launch {
             repository.deleteCompletion(task, completion)
         }

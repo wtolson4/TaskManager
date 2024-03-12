@@ -15,7 +15,7 @@ class PermissionRequester(private val activity: ComponentActivity) {
         }
 
     suspend operator fun invoke(permission: String) =
-        suspendCancellableCoroutine<Boolean> { continuation ->
+        suspendCancellableCoroutine { continuation ->
             requestPermissionContinuation = continuation
             if (activity.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED
             ) {

@@ -1,6 +1,7 @@
 package com.beyondnull.flexibletodos.activity
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -103,11 +104,11 @@ class EditTaskActivity : AppCompatActivity() {
                             MaterialAlertDialogBuilder(this)
                                 .setTitle(R.string.delete_task_dialog_title)
                                 .setMessage(incomingTask.name)
-                                .setNegativeButton(R.string.dialog_cancel) { dialog, which ->
+                                .setNegativeButton(R.string.dialog_cancel) { _, _ ->
                                     // Respond to negative button press
                                 }
-                                .setPositiveButton(R.string.dialog_delete) { dialog, which ->
-                                    viewModel.delete(incomingTask, baseContext)
+                                .setPositiveButton(R.string.dialog_delete) { _, _ ->
+                                    viewModel.delete(incomingTask)
                                     Toast.makeText(this, "Task deleted", Toast.LENGTH_SHORT)
                                         .show()
                                     // TODO: (P2) use jetpack navigation, replace activities with fragments: https://developer.android.com/guide/navigation/migrate
@@ -134,7 +135,11 @@ class EditTaskActivity : AppCompatActivity() {
 
             if (notificationsEnabled) {
                 val notificationPermissionGranted =
-                    permissionRequester(android.Manifest.permission.POST_NOTIFICATIONS)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        permissionRequester(android.Manifest.permission.POST_NOTIFICATIONS)
+                    } else {
+                        true
+                    }
                 if (notificationPermissionGranted) {
                     Timber.d("Notifications permissions allowed")
                 } else {
@@ -164,9 +169,9 @@ class EditTaskActivity : AppCompatActivity() {
                     lastCompleted = existingTask?.value?.lastCompleted
                 )
                 if (existingId == null) {
-                    viewModel.insertTask(newTask, baseContext)
+                    viewModel.insertTask(newTask)
                 } else {
-                    viewModel.update(newTask, baseContext)
+                    viewModel.update(newTask)
                 }
                 Toast.makeText(this, "Task saved", Toast.LENGTH_SHORT).show()
                 true
@@ -194,7 +199,7 @@ class EditTaskActivity : AppCompatActivity() {
         }
 
         // Handle time picker
-        overrideGlobalNotificationSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+        overrideGlobalNotificationSwitch.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 val baseTime = notificationTime ?: LocalTime.now().withMinute(0)
                 notificationTimeEditText.text = baseTime.format(timeFormatter)

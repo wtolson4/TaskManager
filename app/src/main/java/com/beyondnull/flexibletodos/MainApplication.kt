@@ -6,6 +6,7 @@ import com.beyondnull.flexibletodos.manager.AlarmManager
 import com.beyondnull.flexibletodos.manager.NotificationManager
 import com.beyondnull.flexibletodos.manager.WidgetProvider
 import com.google.android.material.color.DynamicColors
+import com.google.android.material.color.DynamicColorsOptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -24,7 +25,10 @@ class MainApplication : Application() {
     // TODO: (P1.5): create a widget
     override fun onCreate() {
         super.onCreate()
-        DynamicColors.applyToActivitiesIfAvailable(this, R.style.MyThemeOverlay)
+        DynamicColors.applyToActivitiesIfAvailable(
+            this,
+            DynamicColorsOptions.Builder().setThemeOverlay(R.style.MyThemeOverlay).build()
+        )
 
 
         // Initialize the Timber logging lib
