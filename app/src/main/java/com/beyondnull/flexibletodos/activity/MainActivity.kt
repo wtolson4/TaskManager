@@ -57,6 +57,7 @@ class MainActivity : AppCompatActivity() {
         taskRecyclerView.layoutManager = LinearLayoutManager(this)
         val taskAdapter = TaskAdapter(viewModel)  // Pass the viewModel here
         taskRecyclerView.adapter = taskAdapter
+        // TODO(P2): Add a message saying "click + to add your first task"
 
         // Add margins to handle the edge-to-edge
         // https://developer.android.com/develop/ui/views/layout/edge-to-edge

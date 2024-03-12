@@ -45,4 +45,5 @@
     <string name="licenses_settings_description">Tap here for license information</string>
     <string name="dialog_ok">@android:string/ok</string>
     <string name="widget_description">Show tasks in a widget</string>
+    <string name="widget_empty">No tasks yet</string>
 </resources>

@@ -4,6 +4,8 @@ import android.app.Application
 import android.util.Log
 import com.beyondnull.flexibletodos.manager.AlarmManager
 import com.beyondnull.flexibletodos.manager.NotificationManager
+import com.beyondnull.flexibletodos.manager.WidgetProvider
+import com.google.android.material.color.DynamicColors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -22,6 +24,8 @@ class MainApplication : Application() {
     // TODO: (P1.5): create a widget
     override fun onCreate() {
         super.onCreate()
+        DynamicColors.applyToActivitiesIfAvailable(this, R.style.MyThemeOverlay)
+
 
         // Initialize the Timber logging lib
         if (BuildConfig.DEBUG) {
@@ -31,13 +35,13 @@ class MainApplication : Application() {
         }
         Timber.d("Starting main application")
 
-        // Trigger notifications and alarms based on task state
+        // Trigger updates to components based on task state
         NotificationManager.watchTasksAndUpdateNotifications(
             this,
             applicationScope
         )
-
         AlarmManager(this, applicationScope).watchTasksAndSetAlarm()
+        WidgetProvider.watchTasksAndUpdateWidget(this, applicationScope)
     }
 
     companion object {

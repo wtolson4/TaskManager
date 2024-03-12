@@ -185,7 +185,7 @@ class NotificationManager {
             val dao = AppDatabase.getDatabase(context).taskDao()
             val repository = TaskRepository(dao, externalScope)
             externalScope.launch {
-                Timber.d("Starting to watch for task changes to trigger alarms")
+                Timber.d("Starting to watch for task changes to trigger notification")
                 repository.allTasks.collect { tasks ->
                     Timber.d("Got updated tasks")
                     updateNotifications(

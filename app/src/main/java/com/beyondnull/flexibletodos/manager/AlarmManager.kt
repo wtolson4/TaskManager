@@ -25,7 +25,7 @@ class AlarmManager(
         val dao = AppDatabase.getDatabase(appContext).taskDao()
         val taskRepository = TaskRepository(dao, externalScope)
         externalScope.launch {
-            Timber.d("Starting to watch for task changes to trigger notifications")
+            Timber.d("Starting to watch for task changes to trigger alarms")
             taskRepository.nextNotificationTime(appContext).collect { nextAlarmTime ->
                 if (nextAlarmTime == null) {
                     Timber.d("No next alarm time")

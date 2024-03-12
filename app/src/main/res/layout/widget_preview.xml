@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/colorPrimaryContainer"
+    android:orientation="vertical">
+
+    <include
+        layout="@layout/widget_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <!--    The number of fake items you include depends on the values you provide-->
+    <!--    for minHeight or targetCellHeight in the AppWidgetProviderInfo-->
+    <!--    definition.-->
+    <!--    https://developer.android.com/develop/ui/views/appwidgets/advanced#complex-list-items-->
+
+    <TextView
+        android:text="Foo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:text="Bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>
