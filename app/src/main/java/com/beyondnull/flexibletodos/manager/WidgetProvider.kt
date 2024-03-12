@@ -1,13 +1,16 @@
 package com.beyondnull.flexibletodos.manager
 
 // TODO(P1): remove Log calls
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.widget.RemoteViews
 import com.beyondnull.flexibletodos.MainApplication
 import com.beyondnull.flexibletodos.R
+import com.beyondnull.flexibletodos.activity.MainActivity
 import com.beyondnull.flexibletodos.calculation.UrgencyColorMapping
 import com.beyondnull.flexibletodos.data.AppDatabase
 import com.beyondnull.flexibletodos.data.Task
@@ -37,22 +40,35 @@ class WidgetProvider : AppWidgetProvider() {
                 // widget.
                 appWidgetManager.updateAppWidget(appWidgetId, views)
             }
-
-            super.onUpdate(context, appWidgetManager, appWidgetIds)
         }
     }
 
     companion object {
-        private fun constructRemoteViews(
+
+        private const val REQUEST_CODE_OPEN_ACTIVITY = 1
+
+        fun constructRemoteViews(
             context: Context,
             tasks: List<Task>
         ): RemoteViews {
-            // Instantiate the RemoteViews object for the widget layout.
-            val views = RemoteViews(context.packageName, R.layout.widget_view).apply {
+            val activityIntent = Intent(context, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            val appOpenIntent = PendingIntent.getActivity(
+                context,
+                REQUEST_CODE_OPEN_ACTIVITY,
+                activityIntent,
+                // API level 31 requires specifying either of
+                // PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_MUTABLE
+                // See https://developer.android.com/about/versions/12/behavior-changes-12#pending-intent-mutability
+                PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            val remoteViews = RemoteViews(context.packageName, R.layout.widget_view).apply {
                 // Use simplified RemoteViews collections (requires API 31)
                 // https://developer.android.com/about/versions/12/features/widgets#leverage-simplified-remoteview-collections
                 val builder = RemoteViews.RemoteCollectionItems.Builder()
-                tasks.forEachIndexed { index, task ->
+                tasks.sortedBy { it.daysUntilDue }.forEachIndexed { index, task ->
                     val listItemRV = RemoteViews(context.packageName, R.layout.widget_list_item)
                     listItemRV.setTextViewText(R.id.taskNameTextView, task.name)
                     listItemRV.setTextViewText(R.id.dueDateTextView, task.getDueDaysString(context))
@@ -74,8 +90,12 @@ class WidgetProvider : AppWidgetProvider() {
                 // It must be in the same layout used to instantiate the
                 // RemoteViews object.
                 setEmptyView(R.id.list_view, R.id.empty_view)
+
+                // TODO: (P1) not sure why this doesn't work
+                // setOnClickPendingIntent(R.id.list_view, appOpenIntent)
             }
-            return views
+
+            return remoteViews
         }
 
         fun watchTasksAndUpdateWidget(

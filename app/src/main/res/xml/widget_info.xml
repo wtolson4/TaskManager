@@ -5,7 +5,5 @@
     android:description="@string/widget_description"
     android:previewLayout="@layout/widget_preview"
     android:initialLayout="@layout/widget_view"
-    android:configure="com.beyondnull.flexibletodos.activity.WidgetConfigurationActivity"
     android:resizeMode="horizontal|vertical"
-    android:widgetCategory="home_screen"
-    android:widgetFeatures="reconfigurable|configuration_optional" />
+    android:widgetCategory="home_screen" />
