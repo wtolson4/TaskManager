@@ -62,7 +62,6 @@ class EditTaskActivity : AppCompatActivity() {
         val taskNameEditText = findViewById<EditText>(R.id.taskNameEditText)
         val descriptionEditText = findViewById<EditText>(R.id.descriptionEditText)
         val initialDueEditText = findViewById<TextView>(R.id.initialDueEditText)
-        val nextDueEditText = findViewById<TextView>(R.id.nextDueEditText)
         val enableTaskNotificationSwitch =
             findViewById<MaterialSwitch>(R.id.enableIndividualTaskNotifications)
         val overrideGlobalNotificationSwitch =
@@ -83,13 +82,11 @@ class EditTaskActivity : AppCompatActivity() {
             incomingTask?.let {
                 // Set visibility
                 (initialDueEditText.parent.parent as View).visibility = View.GONE
-                (nextDueEditText.parent.parent as View).visibility = View.VISIBLE
 
                 // Fill in data
                 taskNameEditText.setText(it.name)
                 descriptionEditText.setText(it.description)
                 periodEditText.setText(it.period.toString())
-                nextDueEditText.text = it.nextDueDate.format(dateFormatter)
                 initialDueDate = it.initialDueDate
                 notificationTime = it.notificationTime
                 enableTaskNotificationSwitch.isChecked = it.notificationsEnabled

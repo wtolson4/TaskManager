@@ -80,24 +80,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/row_height"
-            android:visibility="gone"
-            tools:visibility="visible">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/nextDueEditText"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:enabled="false"
-                android:focusable="false"
-                android:hint="@string/next_due_date"
-                android:inputType="date" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/row_height">
+            android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/descriptionEditText"

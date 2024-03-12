@@ -69,7 +69,7 @@ class ViewTaskActivity : AppCompatActivity() {
                 // Fill in data
                 topAppBar.title = it.name
                 taskNameEditText.setText(it.name)
-                descriptionEditText.setText(it.description)
+                descriptionEditText.setText(it.description.ifEmpty { " " })
                 periodEditText.setText(it.period.toString())
                 nextDueEditText.text = it.nextDueDate.format(dateFormatter)
                 nextNotificationEditText.text =
