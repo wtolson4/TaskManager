@@ -6,7 +6,6 @@ import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.beyondnull.flexibletodos.data.AppDatabase
-import com.beyondnull.flexibletodos.data.AppDatabase.Companion.MIGRATION_1_2
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -18,7 +17,7 @@ class DatabaseMigrationTest {
 
     // Array of all migrations.
     private val ALL_MIGRATIONS = arrayOf(
-        MIGRATION_1_2
+        AppDatabase.MIGRATION_1_2
     )
 
     @get:Rule
