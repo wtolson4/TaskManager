@@ -43,6 +43,6 @@
     <string name="enable_individual_task_notification">Enable notifications for this task</string>
     <string name="licenses_settings_title">Licenses</string>
     <string name="licenses_settings_description">Tap here for license information</string>
-    <string name="dialog_ok">Ok</string>
+    <string name="dialog_ok">@android:string/ok</string>
     <string name="widget_description">Show tasks in a widget</string>
 </resources>

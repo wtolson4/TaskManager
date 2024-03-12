@@ -52,4 +52,17 @@ class Settings {
             }
         }
     }
+
+    // TODO(P3): Consider the following settings from the old app:
+    // - color prominence: bold (highlight entire row), subtle (only due date text is colored)
+    // - color range: regular (green to red), extended (blue to red), discrete
+    // - font weight: normal vs light
+    // - task details page: scroll entire page, or just list of completions
+    // - task list ordering: by due date, or by urgency score
+    // - confirmation for logging task: enable / disable
+    // - first day of week
+    // - language
+    // - widget: background (transparent, 25/50/75/100% black)
+    // - widget: density
+    // - anonymous crash reporting enabled
 }

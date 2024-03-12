@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.beyondnull.flexibletodos.MainApplication
 import com.beyondnull.flexibletodos.R
+import com.beyondnull.flexibletodos.calculation.UrgencyColorMapping
 import com.beyondnull.flexibletodos.data.AppDatabase
 import com.beyondnull.flexibletodos.data.Task
 import com.beyondnull.flexibletodos.data.TaskDiffCallback
@@ -112,6 +113,14 @@ class TaskAdapter(private val viewModel: TaskViewModel) :
         fun bind(currentTask: Task, viewModel: TaskViewModel) {
             taskNameTextView.text = currentTask.name
             dueDateTextView.text = currentTask.getDueDaysString(context)
+            dueDateTextView.setTextColor(
+                UrgencyColorMapping.get(
+                    context,
+                    currentTask.period,
+                    currentTask.daysUntilDue,
+                    UrgencyColorMapping.ColorRange.STANDARD
+                )
+            )
 
             itemView.setOnClickListener {
                 val intent = Intent(itemView.context, ViewTaskActivity::class.java)
