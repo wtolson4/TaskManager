@@ -51,16 +51,12 @@ class WidgetProvider : AppWidgetProvider() {
             context: Context,
             tasks: List<Task>
         ): RemoteViews {
-            val activityIntent = Intent(context, MainActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-            }
             val appOpenIntent = PendingIntent.getActivity(
                 context,
                 REQUEST_CODE_OPEN_ACTIVITY,
-                activityIntent,
-                // API level 31 requires specifying either of
-                // PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_MUTABLE
-                // See https://developer.android.com/about/versions/12/behavior-changes-12#pending-intent-mutability
+                Intent(context, MainActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                },
                 PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
 
@@ -80,6 +76,15 @@ class WidgetProvider : AppWidgetProvider() {
                             UrgencyColorMapping.ColorRange.STANDARD
                         )
                     )
+                    // Set a fill-intent to fill in the pending intent template.
+                    // that is set on the collection view in StackWidgetProvider.
+                    val fillInIntent = Intent().apply {
+//                        putExtra(EditEntryActivity.EXTRA_ENTRY_ID, entry.id)
+                    }
+                    // Make it possible to distinguish the individual on-click
+                    // action of a given item.
+                    setOnClickFillInIntent(R.id.widgetTaskRow, fillInIntent)
+
                     builder.addItem(index.toLong(), listItemRV)
                 }
                 val collectionItems =
@@ -92,7 +97,7 @@ class WidgetProvider : AppWidgetProvider() {
                 setEmptyView(R.id.list_view, R.id.empty_view)
 
                 // TODO: (P1) not sure why this doesn't work
-                // setOnClickPendingIntent(R.id.list_view, appOpenIntent)
+                setPendingIntentTemplate(R.id.list_view, appOpenIntent)
             }
 
             return remoteViews
