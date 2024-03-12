@@ -16,12 +16,12 @@
     <!--    https://developer.android.com/develop/ui/views/appwidgets/advanced#complex-list-items-->
 
     <TextView
-        android:text="Foo"
+        android:text="@string/task_name_placeholder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <TextView
-        android:text="Bar"
+        android:text="@string/task_name_placeholder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

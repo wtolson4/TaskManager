@@ -5,15 +5,15 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
-import android.util.Log
 import android.widget.RemoteViews
+import com.beyondnull.flexibletodos.MainApplication
 import com.beyondnull.flexibletodos.R
+import com.beyondnull.flexibletodos.calculation.UrgencyColorMapping
 import com.beyondnull.flexibletodos.data.AppDatabase
 import com.beyondnull.flexibletodos.data.Task
 import com.beyondnull.flexibletodos.data.TaskRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -24,15 +24,12 @@ class WidgetProvider : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-        Log.e("myWidget", "at top of OnUpdate")
-        GlobalScope.launch(Dispatchers.IO) {
+        MainApplication.applicationScope.launch(Dispatchers.IO) {
             val dao = AppDatabase.getDatabase(context).taskDao()
-            val repository = TaskRepository(dao, GlobalScope)
+            val repository = TaskRepository(dao, MainApplication.applicationScope)
             val tasks = repository.allTasks.first()
             // Perform this loop procedure for each widget that belongs to this
             // provider.
-            Log.e("myWidget", "got Tasks")
-
             appWidgetIds.forEach { appWidgetId ->
                 // Instantiate the RemoteViews object for the widget layout.
                 val views = constructRemoteViews(context, tasks)
@@ -55,9 +52,18 @@ class WidgetProvider : AppWidgetProvider() {
                 // Use simplified RemoteViews collections (requires API 31)
                 // https://developer.android.com/about/versions/12/features/widgets#leverage-simplified-remoteview-collections
                 val builder = RemoteViews.RemoteCollectionItems.Builder()
-                tasks.forEachIndexed { index, _ ->
+                tasks.forEachIndexed { index, task ->
                     val listItemRV = RemoteViews(context.packageName, R.layout.widget_list_item)
-                    listItemRV.setTextViewText(R.id.taskNameTextView, "foo")
+                    listItemRV.setTextViewText(R.id.taskNameTextView, task.name)
+                    listItemRV.setTextViewText(R.id.dueDateTextView, task.getDueDaysString(context))
+                    listItemRV.setTextColor(
+                        R.id.dueDateTextView, UrgencyColorMapping.get(
+                            context,
+                            task.period,
+                            task.daysUntilDue,
+                            UrgencyColorMapping.ColorRange.STANDARD
+                        )
+                    )
                     builder.addItem(index.toLong(), listItemRV)
                 }
                 val collectionItems =

@@ -2,6 +2,7 @@ package com.beyondnull.flexibletodos
 
 import androidx.room.Room
 import androidx.room.testing.MigrationTestHelper
+import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.beyondnull.flexibletodos.data.AppDatabase
@@ -22,7 +23,9 @@ class DatabaseMigrationTest {
     @get:Rule
     val helper: MigrationTestHelper = MigrationTestHelper(
         InstrumentationRegistry.getInstrumentation(),
-        AppDatabase::class.java.canonicalName,
+        AppDatabase::class.java,
+        emptyList(), // Auto-migrations go here
+        FrameworkSQLiteOpenHelperFactory()
     )
 
     @Test
