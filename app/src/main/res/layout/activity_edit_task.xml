@@ -39,26 +39,26 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:hint="@string/task_name_placeholder"
                 android:layout_weight="2">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/taskNameEditText"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:hint="@string/task_name_placeholder"
                     android:inputType="textCapSentences|textAutoCorrect" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:hint="@string/period"
                 android:layout_weight="1">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/periodEditText"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:hint="@string/period"
                     android:inputType="number" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -66,6 +66,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
+            android:hint="@string/initial_due_date"
             android:layout_height="@dimen/row_height">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -74,20 +75,23 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:focusable="false"
-                android:hint="@string/initial_due_date"
                 android:inputType="date" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
+            android:hint="@string/description_placeholder"
             android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/descriptionEditText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="@string/description_placeholder"
-                android:inputType="textMultiLine|textCapSentences|textAutoCorrect" />
+                android:inputType="textMultiLine|textCapSentences|textAutoCorrect"
+                android:maxLines="10"
+                android:overScrollMode="always"
+                android:scrollbarStyle="insideInset"
+                android:scrollbars="vertical" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.materialswitch.MaterialSwitch
@@ -106,14 +110,14 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/row_height"
             android:visibility="gone"
-            tools:visibility="visible">
+            tools:visibility="visible"
+            android:hint="@string/notification_time">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/notificationTimeEditText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:focusable="false"
-                android:hint="@string/notification_time"
                 android:inputType="date" />
         </com.google.android.material.textfield.TextInputLayout>
 

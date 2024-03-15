@@ -40,28 +40,28 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="2">
+                android:layout_weight="2"
+                android:hint="@string/task_name_placeholder">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/taskNameEditText"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:enabled="false"
-                    android:hint="@string/task_name_placeholder"
                     android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:hint="@string/period">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/periodEditText"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:enabled="false"
-                    android:hint="@string/period"
                     android:inputType="number" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -69,7 +69,8 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/row_height">
+            android:layout_height="@dimen/row_height"
+            android:hint="@string/next_due_date">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/nextDueEditText"
@@ -78,13 +79,13 @@
                 android:layout_weight="1"
                 android:enabled="false"
                 android:focusable="false"
-                android:hint="@string/next_due_date"
                 android:inputType="date" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/row_height">
+            android:layout_height="@dimen/row_height"
+            android:hint="@string/next_notification_date">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/nextNotificationEditText"
@@ -93,21 +94,42 @@
                 android:layout_weight="1"
                 android:enabled="false"
                 android:focusable="false"
-                android:hint="@string/next_notification_date"
                 android:inputType="date" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:hint="@string/description_placeholder"
+            android:alpha="1.0">
 
+            <!-- TODO: (P3) Make my own styling for a TextView for this page, so I don't have
+            to hack the TextInput into scrolling with enabled:true. Then can use
+            https://stackoverflow.com/a/3256305 to scroll -->
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/descriptionEditText"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:enabled="false"
-                android:hint="@string/description_placeholder"
+                android:layout_height="wrap_content"
+                android:maxLines="7"
+                android:scrollbars="vertical"
+                android:enabled="true"
+                android:alpha="@dimen/m3_comp_outlined_text_field_disabled_input_text_opacity"
+                android:color="@macro/m3_comp_outlined_text_field_disabled_input_text_color"
+                android:focusable="false"
                 android:inputType="textMultiLine" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/description_placeholder">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/descriptionEditText2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="7"
+                android:scrollbars="vertical" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
