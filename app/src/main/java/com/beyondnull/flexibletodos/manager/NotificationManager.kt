@@ -92,7 +92,7 @@ class NotificationManager {
             val groupKey = "notifications_due"
 
             val notification = NotificationCompat.Builder(context, notificationChannelId)
-                .setSmallIcon(R.drawable.baseline_task_alt_24)
+                .setSmallIcon(R.drawable.app_logo_24)
                 .setContentTitle(task.name)
                 .setContentText(task.getDueDaysString(context))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -102,7 +102,7 @@ class NotificationManager {
                 .setAutoCancel(false)
                 // Add an action to mark as done
                 .addAction(
-                    R.drawable.baseline_task_alt_24,
+                    R.drawable.app_logo_24,
                     getString(context, R.string.notification_action_mark_as_done),
                     markAsDonePendingIntent
                 )
@@ -114,7 +114,7 @@ class NotificationManager {
 
             val summaryNotification = NotificationCompat.Builder(context, notificationChannelId)
                 .setContentTitle("Tasks are due")
-                .setSmallIcon(R.drawable.baseline_task_alt_24)
+                .setSmallIcon(R.drawable.app_logo_24)
                 // Set the intent that fires when the user taps the notification.
                 .setContentIntent(genericClickPendingIntent)
                 // Automatically removes the notification when the user taps it.
