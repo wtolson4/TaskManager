@@ -5,6 +5,12 @@
     android:tint="@android:color/holo_purple"
     android:viewportWidth="24"
     android:viewportHeight="24">
+    <!--    android:viewportWidth="22"-->
+    <!--    android:viewportHeight="22">-->
+    <!--      <group android:scaleX="1"-->
+    <!--      android:scaleY="1"-->
+    <!--      android:translateX="-1"-->
+    <!--      android:translateY="0">-->
     <path
         android:fillColor="@android:color/white"
         android:pathData="M 12 1  12 5.5  15.5 3.5 Z"
@@ -24,4 +30,5 @@
         android:strokeColor="@android:color/white"
         android:strokeLineCap="round"
         android:strokeLineJoin="round" />
+    <!--      </group>-->
 </vector>
