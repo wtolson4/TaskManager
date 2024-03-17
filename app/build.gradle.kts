@@ -5,7 +5,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
     kotlin("plugin.serialization") version "1.9.21"
-    id("com.likethesalad.stem") version "2.7.0"
+    id("com.likethesalad.stem") version "2.8.0"
     id("androidx.room")
 }
 
@@ -85,7 +85,7 @@ dependencies {
     implementation("com.jakewharton.timber:timber:5.0.1")
     implementation("de.raphaelebner:roomdatabasebackup:1.0.0-beta14")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.5.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     ksp("androidx.room:room-compiler:2.6.1")
     testImplementation("androidx.room:room-testing:2.6.1")
     testImplementation("androidx.test.ext:junit-ktx:1.1.5")
