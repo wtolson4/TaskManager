@@ -13,6 +13,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "FlexibleToDoListApp2"
+rootProject.name = "FlexibleTodos"
 include(":app")
  
